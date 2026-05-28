@@ -111,6 +111,31 @@ test_that("add_sudo leaves user-level commands unchanged", {
   )
 })
 
+test_that("add_sudo prefixes update-alternatives and systemctl", {
+  add_sudo <- getFromNamespace("add_sudo", "sysreqr")
+  expect_equal(
+    add_sudo("update-alternatives --install /usr/bin/x x /opt/x 1"),
+    "sudo update-alternatives --install /usr/bin/x x /opt/x 1"
+  )
+  expect_equal(
+    add_sudo("systemctl restart postgresql"),
+    "sudo systemctl restart postgresql"
+  )
+})
+
+test_that("install_command missing_only=FALSE includes installed packages", {
+  withr::local_options(sysreqr.installed_system_packages = "libxml2-dev")
+  plan <- check_packages("xml2", platform = "ubuntu-22.04")
+
+  only_missing <- install_command(plan, missing_only = TRUE)
+  all_pkgs <- install_command(plan, missing_only = FALSE)
+
+  # libxml2-dev is marked installed, so missing_only drops it but
+  # missing_only = FALSE keeps it.
+  expect_false(any(grepl("libxml2-dev", only_missing, fixed = TRUE)))
+  expect_true(any(grepl("libxml2-dev", all_pkgs, fixed = TRUE)))
+})
+
 test_that("add_sudo is vectorised", {
   add_sudo <- getFromNamespace("add_sudo", "sysreqr")
   out <- add_sudo(c(

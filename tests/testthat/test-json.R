@@ -52,3 +52,16 @@ test_that("JSON parser rejects malformed input", {
   expect_error(json_read_text('{"a"'))
   expect_error(json_read_text("not json at all"))
 })
+
+test_that("JSON parser rejects unescaped control characters in strings", {
+  raw_newline <- paste0('{"x":"a', "\n", 'b"}')
+  expect_error(json_read_text(raw_newline), "control character")
+
+  raw_tab <- paste0('{"x":"a', "\t", 'b"}')
+  expect_error(json_read_text(raw_tab), "control character")
+})
+
+test_that("JSON parser still accepts escaped control characters", {
+  value <- json_read_text('{"x":"a\\nb\\tc"}')
+  expect_equal(value$x, "a\nb\tc")
+})

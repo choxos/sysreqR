@@ -102,6 +102,27 @@ test_that("diagnose_log preserves unresolved through the merged plan", {
   expect_match(out, "unknownpkg", fixed = TRUE)
 })
 
+test_that("diagnose_log propagates unresolved when the ppm backend falls back to bundled", {
+  # Force the PPM call to fail so ppm_sysreqs() falls back to the bundled
+  # database, which tags the unknown package as unresolved. That attribute
+  # must survive the merge in diagnose_log().
+  failing_mock <- function(endpoint, query, base_url) {
+    stop("simulated PPM outage", call. = FALSE)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = failing_mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  plan <- diagnose_log(
+    text = "installation of package 'unknownpkg' had non-zero exit status",
+    platform = "ubuntu-22.04",
+    backend = "ppm"
+  )
+
+  expect_equal(attr(plan, "unresolved"), "unknownpkg")
+})
+
 test_that("diagnose_log surfaces direct hits and unresolved failed packages together", {
   text <- paste(
     "fatal error: libxml/parser.h: No such file or directory",

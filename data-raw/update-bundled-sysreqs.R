@@ -1,8 +1,32 @@
-# Release utility for updating bundled apt system requirement data.
-# Run from the package root as part of release preparation.
+# Release utility for refreshing the bundled apt system requirement data.
+# Run from the package root as part of release preparation, e.g.
+#   Rscript data-raw/update-bundled-sysreqs.R ubuntu 22.04
+#
+# The bundled table is a small, hand-curated fallback for common CRAN
+# packages. It targets an apt baseline (Ubuntu 22.04 by default), but the
+# committed names in R/bundled-sysreqs.R are deliberately chosen to be
+# portable across Debian (bookworm/trixie) and Ubuntu (jammy/noble) -- for
+# example "default-libmysqlclient-dev" rather than the Ubuntu-only
+# "libmysqlclient-dev". Posit Package Manager returns Ubuntu-specific names,
+# so the maintainer must review the diff this script produces and re-apply
+# any portable substitutions before committing. The committed
+# R/bundled-sysreqs.R is the source of truth.
+#
+# This script only refreshes the curated package set below; it never expands
+# the table to the full Package Manager database.
 
 source(file.path("R", "utils.R"))
 source(file.path("R", "json.R"))
+
+# Curated R packages tracked by the bundled fallback. Keep this list in
+# sync with the table shipped in the package source.
+bundled_packages <- c(
+  "curl", "xml2", "openssl", "ragg", "systemfonts", "textshaping",
+  "sf", "terra", "units", "git2r", "gert", "magick", "pdftools",
+  "tesseract", "RPostgres", "RMariaDB", "RMySQL", "RODBC", "V8",
+  "sodium", "stringi", "webp", "png", "jpeg", "tiff", "gsl", "RcppGSL",
+  "gmp", "Rmpfr", "fftwtools", "hdf5r", "ncdf4"
+)
 
 quote_chr <- function(x) {
   paste0("\"", gsub("([\"\\\\])", "\\\\\\1", x), "\"")
@@ -63,6 +87,13 @@ normalize_ppm_packages <- function(response) {
   }
 
   out <- unique(do.call(rbind, rows))
+  out <- out[out$r_package %in% bundled_packages, , drop = FALSE]
+  if (!nrow(out)) {
+    stop(
+      "No curated packages were found in the Package Manager response.",
+      call. = FALSE
+    )
+  }
   out[order(tolower(out$r_package), out$system_package), , drop = FALSE]
 }
 

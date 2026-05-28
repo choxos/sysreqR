@@ -250,6 +250,7 @@ known_platforms <- function() {
       "debian-12", "debian-13", "bookworm", "trixie",
       "redhat-7", "redhat-8", "redhat-9", "redhat-10",
       "rockylinux-9", "rockylinux-10", "rhel9", "rhel10",
+      "almalinux-9", "almalinux-10",
       "centos7", "opensuse156", "sle-15.6", "sles156"
     ),
     distro = c(
@@ -258,6 +259,7 @@ known_platforms <- function() {
       "debian", "debian", "debian", "debian",
       "redhat", "redhat", "redhat", "redhat",
       "rockylinux", "rockylinux", "rockylinux", "rockylinux",
+      "almalinux", "almalinux",
       "centos", "opensuse", "sle", "sle"
     ),
     version = c(
@@ -266,13 +268,14 @@ known_platforms <- function() {
       "12", "13", "12", "13",
       "7", "8", "9", "10",
       "9", "10", "9", "10",
+      "9", "10",
       "7", "15.6", "15.6", "15.6"
     ),
     codename = c(
       "jammy", "noble", "resolute",
       "jammy", "noble", "resolute",
       "bookworm", "trixie", "bookworm", "trixie",
-      rep(NA_character_, 12)
+      rep(NA_character_, 14)
     ),
     ppm_binary_url = c(
       "jammy", "noble", "resolute",
@@ -280,6 +283,7 @@ known_platforms <- function() {
       "bookworm", "trixie", "bookworm", "trixie",
       "centos7", "centos8", "rhel9", "rhel10",
       "rhel9", "rhel10", "rhel9", "rhel10",
+      "rhel9", "rhel10",
       "centos7", "opensuse156", "opensuse156", "opensuse156"
     ),
     label = c(
@@ -289,6 +293,7 @@ known_platforms <- function() {
       "Red Hat Enterprise Linux 7", "Red Hat Enterprise Linux 8",
       "Red Hat Enterprise Linux 9", "Red Hat Enterprise Linux 10",
       "Rocky Linux 9", "Rocky Linux 10", "Rocky Linux 9", "Rocky Linux 10",
+      "AlmaLinux 9", "AlmaLinux 10",
       "CentOS 7", "OpenSUSE 15.6", "SLE 15.6", "SLE 15.6"
     ),
     stringsAsFactors = FALSE

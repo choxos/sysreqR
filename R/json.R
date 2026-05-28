@@ -121,6 +121,11 @@ json_parse_string <- function(state) {
       break
     }
 
+    code <- utf8ToInt(ch)
+    if (length(code) && code <= 31L) {
+      stop("Invalid JSON: unescaped control character.", call. = FALSE)
+    }
+
     if (identical(ch, "\\")) {
       esc <- substr(state$text, state$pos, state$pos)
       state$pos <- state$pos + 1L

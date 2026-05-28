@@ -36,6 +36,38 @@ test_that("detect_project_packages scans source files when no manifest exists", 
   expect_true("curl" %in% pkgs)
 })
 
+test_that("detect_project_packages detects requireNamespace()", {
+  tmp <- withr::local_tempdir()
+  writeLines(
+    c(
+      "requireNamespace(\"xml2\")",
+      "if (requireNamespace('jsonlite', quietly = TRUE)) {}"
+    ),
+    file.path(tmp, "main.R")
+  )
+
+  pkgs <- detect_project_packages(tmp)
+  expect_true("xml2" %in% pkgs)
+  expect_true("jsonlite" %in% pkgs)
+})
+
+test_that("detect_project_packages ignores names in line comments", {
+  tmp <- withr::local_tempdir()
+  writeLines(
+    c(
+      "# foo::bar is just a comment",
+      "# library(commentedpkg)",
+      "library(xml2)"
+    ),
+    file.path(tmp, "main.R")
+  )
+
+  pkgs <- detect_project_packages(tmp)
+  expect_true("xml2" %in% pkgs)
+  expect_false("foo" %in% pkgs)
+  expect_false("commentedpkg" %in% pkgs)
+})
+
 test_that("check_project routes through check_packages", {
   withr::local_options(
     sysreqr.ppm_get = mock_ppm_get,

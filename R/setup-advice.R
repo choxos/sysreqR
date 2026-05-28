@@ -303,7 +303,10 @@ setup_r_project_advice <- function(platform) {
       ),
       notes = paste(
         "Use the R Project Ubuntu repository when your system R is too old.",
-        "For many package install failures, try Posit Package Manager or system requirements first."
+        "For many package install failures, try Posit Package Manager or",
+        "system requirements first.",
+        "On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation",
+        "warning; it still works."
       )
     ))
   }
@@ -313,23 +316,32 @@ setup_r_project_advice <- function(platform) {
     commands <- "sudo apt install -y r-base r-base-dev"
     notes <- "Install r-base-dev when you want to compile R packages from source."
     if (!is.na(suite) && nzchar(suite)) {
-      repo <- paste0("deb http://cloud.r-project.org/bin/linux/debian ", suite, "/")
+      sources <- paste0(
+        "Types: deb\\n",
+        "URIs: https://cloud.r-project.org/bin/linux/debian/\\n",
+        "Suites: ", suite, "/\\n",
+        "Components:\\n",
+        "Signed-By: /etc/apt/keyrings/cran_debian_key.asc\\n"
+      )
       commands <- c(
+        "sudo install -d -m 0755 /etc/apt/keyrings",
         paste0(
           "gpg --keyserver keyserver.ubuntu.com --recv-key ",
           "'95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'"
         ),
         paste(
           "gpg --armor --export '95C0FAF38DB3CCAD0C080A7BDC78B2DDEABC47B7'",
-          "| sudo tee /etc/apt/trusted.gpg.d/cran_debian_key.asc"
+          "| sudo tee /etc/apt/keyrings/cran_debian_key.asc"
         ),
-        paste0("printf \"%s\\n\" \"", repo, "\" | sudo tee /etc/apt/sources.list.d/cran-r.list"),
+        paste0("printf '", sources, "' | sudo tee /etc/apt/sources.list.d/cran.sources"),
         "sudo apt update",
         "sudo apt install -y r-base r-base-dev"
       )
       notes <- paste(
         "Use the R Project Debian repository when you need newer R than Debian provides.",
-        "Compiled packages may need to be reinstalled after an R version change."
+        "This uses the deb822 sources format with a Signed-By keyring, matching CRAN's",
+        "current Debian instructions. Compiled packages may need reinstalling after an",
+        "R version change."
       )
     }
     return(list(commands = commands, notes = notes))
@@ -339,13 +351,13 @@ setup_r_project_advice <- function(platform) {
     return(list(
       commands = c(
         "sudo dnf install -y R",
-        "dnf repoquery --repo=fedora-source R-*",
         "sudo dnf copr enable iucar/cran",
         "sudo dnf install -y R-CoprManager"
       ),
       notes = paste(
         "Fedora provides R through the system package manager.",
-        "The cran2copr repository can provide binary RPMs for many CRAN packages."
+        "The optional iucar/cran COPR repository adds binary RPMs for many more CRAN",
+        "packages; R-CoprManager integrates it with install.packages()."
       )
     ))
   }

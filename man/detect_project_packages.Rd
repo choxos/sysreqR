@@ -24,7 +24,8 @@ priority is:
 \item \code{DESCRIPTION} (\code{Depends}, \code{Imports}, \code{LinkingTo}, and optionally
 \code{Suggests}),
 \item \code{.R}, \code{.Rmd}, \code{.qmd}, and \code{NAMESPACE} files (looking for \code{library()},
-\code{require()}, and \code{pkg::fun} references).
+\code{require()}, \code{requireNamespace()}, and \code{pkg::fun} references; line
+comments are ignored).
 }
 }
 \examples{

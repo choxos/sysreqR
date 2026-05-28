@@ -22,6 +22,28 @@ test_that("auto backend does not pick bundled on non-apt platforms (regression)"
   expect_equal(select_backend("xml2", "auto", ubuntu), "bundled")
 })
 
+test_that("select_backend routes a known package to ppm on non-apt platforms", {
+  # Positive assertion (not just "not bundled"): a simple, known package on a
+  # non-apt platform must route to ppm.
+  expect_equal(select_backend("xml2", "auto", resolve_platform("fedora-40")), "ppm")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("rockylinux-9")), "ppm")
+})
+
+test_that("bundled database uses cross-distro-portable package names", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+
+  mariadb <- check_packages("RMariaDB", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true("default-libmysqlclient-dev" %in% mariadb$system_package)
+  expect_false("libmysqlclient-dev" %in% mariadb$system_package)
+
+  gsl <- check_packages("gsl", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true("libgsl-dev" %in% gsl$system_package)
+
+  ragg <- check_packages("ragg", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true("libfreetype-dev" %in% ragg$system_package)
+  expect_false("libfreetype6-dev" %in% ragg$system_package)
+})
+
 test_that("check_packages on Fedora falls through without the apt-only error", {
   # When auto routing previously chose bundled on any platform with known
   # packages, this call errored with "Bundled fallback data currently supports

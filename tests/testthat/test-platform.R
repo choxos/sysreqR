@@ -128,3 +128,21 @@ test_that("detect_package_manager returns the manager for a platform", {
   expect_equal(detect_package_manager("fedora-40"), "dnf")
   expect_equal(detect_package_manager("opensuse156"), "zypper")
 })
+
+test_that("resolve_platform supports AlmaLinux with a PPM binary URL", {
+  alma9 <- resolve_platform("almalinux-9")
+  expect_equal(alma9$distro, "almalinux")
+  expect_equal(alma9$version, "9")
+  expect_equal(alma9$package_manager, "dnf")
+  expect_equal(alma9$ppm_binary_url, "rhel9")
+
+  alma10 <- resolve_platform("almalinux-10")
+  expect_equal(alma10$ppm_binary_url, "rhel10")
+})
+
+test_that("ppm_repo builds a URL for AlmaLinux", {
+  expect_equal(
+    ppm_repo(platform = "almalinux-9"),
+    "https://packagemanager.posit.co/cran/__linux__/rhel9/latest"
+  )
+})

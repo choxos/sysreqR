@@ -7,7 +7,8 @@
 #' 2. `DESCRIPTION` (`Depends`, `Imports`, `LinkingTo`, and optionally
 #'    `Suggests`),
 #' 3. `.R`, `.Rmd`, `.qmd`, and `NAMESPACE` files (looking for `library()`,
-#'    `require()`, and `pkg::fun` references).
+#'    `require()`, `requireNamespace()`, and `pkg::fun` references; line
+#'    comments are ignored).
 #'
 #' @param path Project path.
 #' @param include_suggests Whether to include `Suggests` from `DESCRIPTION`.
@@ -123,25 +124,28 @@ packages_from_source_files <- function(path) {
   }
 
   text <- unlist(lapply(files, readLines, warn = FALSE), use.names = FALSE)
+  # Strip line comments so package names mentioned in comments are not
+  # detected as dependencies. This does not remove names inside string
+  # literals, which remain a known limitation of regex-based scanning.
+  text <- sub("#.*$", "", text)
   matches <- gregexpr(
-    "(library|require)\\s*\\(\\s*['\"]?([A-Za-z][A-Za-z0-9.]*)|([A-Za-z][A-Za-z0-9.]*)\\s*::",
+    paste0(
+      "(library|requireNamespace|require)\\s*\\(\\s*['\"]?([A-Za-z][A-Za-z0-9.]*)",
+      "|([A-Za-z][A-Za-z0-9.]*)\\s*::"
+    ),
     text,
     perl = TRUE
   )
 
-  found <- character()
-  for (i in seq_along(matches)) {
-    m <- regmatches(text[[i]], matches[[i]])[[1]]
-    if (!length(m)) {
-      next
-    }
-    found <- c(
-      found,
-      sub(".*\\(\\s*['\"]?([A-Za-z][A-Za-z0-9.]*).*", "\\1", m),
-      sub("^([A-Za-z][A-Za-z0-9.]*)\\s*::.*", "\\1", m)
-    )
+  m <- unlist(regmatches(text, matches), use.names = FALSE)
+  if (!length(m)) {
+    return(character())
   }
 
+  found <- c(
+    sub(".*\\(\\s*['\"]?([A-Za-z][A-Za-z0-9.]*).*", "\\1", m),
+    sub("^([A-Za-z][A-Za-z0-9.]*)\\s*::.*", "\\1", m)
+  )
   found <- found[is_simple_package_name(found)]
   compact_chr(found)
 }
