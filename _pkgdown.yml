@@ -1,0 +1,100 @@
+url: https://choxos.github.io/sysreqR/
+
+template:
+  bootstrap: 5
+  bootswatch: cosmo
+  bslib:
+    primary: "#2c3e50"
+    base_font: {google: "Inter"}
+    heading_font: {google: "Inter"}
+    code_font: {google: "JetBrains Mono"}
+
+home:
+  title: sysreqr
+  description: >
+    Preflight checks for R package system requirements on GNU/Linux. Discover
+    missing system packages, generate install commands, produce Dockerfile and
+    GitHub Actions snippets, and diagnose failed installation logs, with zero
+    runtime dependencies.
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
+  components:
+    articles:
+      text: Articles
+      menu:
+        - text: "Workflows"
+        - text: Preflight setup
+          href: articles/preflight-setup.html
+        - text: Diagnosing failed installations
+          href: articles/diagnosing-failures.html
+        - text: Docker and CI workflows
+          href: articles/docker-and-ci.html
+        - text: "---"
+        - text: "Linux background"
+        - text: GNU/Linux fundamentals
+          href: articles/linux-fundamentals.html
+        - text: FAQ and troubleshooting
+          href: articles/faq.html
+
+reference:
+  - title: Preflight checks
+    desc: >
+      Resolve the system packages your R packages need on a given platform.
+    contents:
+      - has_concept("preflight")
+
+  - title: Platform detection
+    desc: Detect or specify the platform under inspection.
+    contents:
+      - has_concept("platform")
+
+  - title: Output and commands
+    desc: >
+      Turn a plan into install commands, Docker snippets, GitHub Actions YAML,
+      or administrator request templates.
+    contents:
+      - has_concept("commands")
+
+  - title: Diagnose failed installs
+    desc: >
+      Match installation logs and failed package names to likely missing system
+      packages.
+    contents:
+      - has_concept("diagnose")
+
+  - title: Posit Package Manager
+    desc: Query the Posit Package Manager API and build repository URLs.
+    contents:
+      - has_concept("ppm")
+
+  - title: File writers
+    desc: Persist plans as JSON, Markdown, install scripts, or Dockerfile snippets.
+    contents:
+      - has_concept("output")
+
+  - title: The plan object
+    desc: Introspect and coerce `sysreqr_plan` objects.
+    contents:
+      - has_concept("plan")
+
+  - title: Setup advice
+    desc: Beginner-focused setup checklists and explanations.
+    contents:
+      - has_concept("setup")
+
+articles:
+  - title: Workflows
+    navbar: Workflows
+    contents:
+      - preflight-setup
+      - diagnosing-failures
+      - docker-and-ci
+
+  - title: Linux background
+    navbar: Linux background
+    contents:
+      - linux-fundamentals
+      - faq

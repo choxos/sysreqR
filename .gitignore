@@ -1,0 +1,15 @@
+.DS_Store
+.Rproj.user/
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+*.Rcheck/
+..Rcheck/
+*.tar.gz
+*.tgz
+docs/
+inst/doc/
+vignettes/*.html
+vignettes/*_files/
+vignettes/*_cache/

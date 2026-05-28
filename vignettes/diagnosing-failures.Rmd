@@ -1,0 +1,190 @@
+---
+title: "Diagnosing failed R package installations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Diagnosing failed R package installations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(sysreqr)
+```
+
+## When the preflight check did not happen
+
+Sometimes preflight checks do not happen. A user runs `install.packages()`, a
+package compiles from source, and the installation fails. The useful next step
+is to turn the error into a small list of likely system packages, not to ask
+the user to read a long compiler log alone.
+
+`sysreqr` has two diagnosis paths:
+
+* **Direct log patterns**, for common missing headers, linker errors, and
+  `pkg-config` failures.
+* **Failed R package lookup**, where the failed R package names are matched
+  against the bundled or optional live system requirement database.
+
+Both paths return a regular `sysreqr_plan`, so the output can be passed to
+the same command, report, script, Dockerfile, GitHub Actions, and
+administrator helpers used for preflight checks.
+
+## Check the last error
+
+After a failed install in the current R session:
+
+```{r, eval = FALSE}
+install.packages("xml2")
+check_error(platform = "ubuntu-22.04")
+```
+
+`check_error()` reads `geterrmessage()` by default. You can also pass text
+explicitly:
+
+```{r}
+check_error(
+  text = "ERROR: configuration failed for package 'xml2'",
+  platform = "ubuntu-22.04",
+  backend = "bundled"
+)
+```
+
+## Diagnose a log file
+
+Use `diagnose_log()` for an install log on disk:
+
+```{r, eval = FALSE}
+plan <- diagnose_log("install.log", platform = "ubuntu-22.04")
+```
+
+Use the `text` argument when the log text is already in R:
+
+```{r}
+diagnose_log(
+  text = "fatal error: libxml/parser.h: No such file or directory",
+  platform = "ubuntu-22.04"
+)
+```
+
+`diagnose_install_log()` is an alias for `diagnose_log()`.
+
+## Start from failed package names
+
+If the user already knows which R packages failed, skip log parsing:
+
+```{r}
+diagnose_failed_packages(
+  c("xml2", "curl"),
+  platform = "ubuntu-22.04",
+  backend = "bundled"
+)
+```
+
+This is useful when the log only says that an R package had non-zero exit
+status. It is a medium-confidence result, because package installation can
+fail for reasons unrelated to system libraries.
+
+## Turn diagnosis into action
+
+Diagnosis returns a `sysreqr_plan`. Use the same helpers as in the preflight
+workflow:
+
+```{r, eval = FALSE}
+plan <- diagnose_log("install.log", platform = "ubuntu-22.04")
+install_command(plan)
+write_install_script(plan, "install-sysreqs.sh")
+admin_request(plan)
+write_report(plan, "SYSREQS.md")
+```
+
+For automation:
+
+```{r, eval = FALSE}
+dockerfile(plan)
+github_actions(plan)
+write_json(plan, "sysreqs.json")
+```
+
+For explanation:
+
+```{r, eval = FALSE}
+explain(plan)
+as_data_frame(plan)
+```
+
+## Check a whole project
+
+When one package fails, dependencies nearby in the project may fail next.
+`check_project()` scans a project before the next installation attempt. It
+reads `renv.lock`, then `DESCRIPTION`, then source files.
+
+```{r, eval = FALSE}
+project_plan <- check_project(".")
+```
+
+Include `Suggests` when preparing a development or testing environment:
+
+```{r, eval = FALSE}
+project_plan <- check_project(".", include_suggests = TRUE)
+```
+
+To inspect only package detection:
+
+```{r, eval = FALSE}
+detect_project_packages(".")
+detect_project_packages(".", include_suggests = TRUE)
+```
+
+## Check an installed library
+
+`check_library()` checks installed packages in an R library. This is useful
+when a machine already has many packages installed and you want to see whether
+their common external requirements are present.
+
+```{r, eval = FALSE}
+check_library()
+check_library(c("xml2", "curl"))
+```
+
+## Interpret confidence
+
+`sysreqr` uses conservative confidence labels:
+
+* `high`: a direct missing-header or linker pattern, or structured upstream
+  requirement data.
+* `medium`: a likely tool failure, or a failed package lookup against the
+  bundled fallback.
+* `low`: reserved for future broader heuristics.
+
+A medium-confidence result is still useful, but it is not proof that a missing
+system library caused the failure. R version mismatches, network problems,
+locked libraries, compiler bugs, unsupported package versions, and permission
+problems can all produce failed installs that are outside the system
+requirement database.
+
+## When setup advice is the better answer
+
+If repeated installs fail, run `setup_advice()` instead of chasing one error
+at a time:
+
+```{r, eval = FALSE}
+setup_advice(
+  packages = c("xml2", "curl"),
+  platform = "ubuntu-22.04",
+  script = "setup-sysreqr.sh"
+)
+```
+
+That gives the user a broader checklist: binary R packages, source build
+tools, optional R Project operating system repositories, and package-specific
+system requirements.
+
+## See also
+
+* `vignette("preflight-setup")` for the preventive workflow.
+* `vignette("faq")` for common diagnosis questions.
+* `vignette("linux-fundamentals")` for the underlying GNU/Linux concepts.

@@ -1,0 +1,21 @@
+year <- sub("-.*", "", meta$Date %||% format(Sys.Date(), "%Y"))
+note <- sprintf("R package version %s", meta$Version)
+
+bibentry(
+  bibtype = "Manual",
+  title   = "sysreqr: Preflight Checks for R Package System Requirements",
+  author  = person(
+    "Ahmad", "Sofi-Mahmudi",
+    email = "a.sofimahmudi@gmail.com",
+    comment = c(ORCID = "0000-0001-6829-0823")
+  ),
+  year    = year,
+  note    = note,
+  url     = "https://github.com/choxos/sysreqR",
+  textVersion = paste0(
+    "Sofi-Mahmudi A (", year, "). ",
+    "sysreqr: Preflight Checks for R Package System Requirements. ",
+    note, ". ",
+    "https://github.com/choxos/sysreqR."
+  )
+)

@@ -1,0 +1,193 @@
+---
+title: "Preflight setup before installing R packages"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preflight setup before installing R packages}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(sysreqr)
+```
+
+## Why preflight?
+
+A new GNU/Linux user often meets system requirements only after something has
+already failed. The better workflow is to check the setup first, use binary R
+packages where possible, and install source build tools only when source
+packages are needed.
+
+`sysreqr` is a zero-runtime-dependency helper for that workflow. It does not
+run `sudo`, edit operating system repositories, or install system packages. It
+prints commands and writes files that the user, or their administrator, can
+review.
+
+## Understand the platform
+
+`sysreqr` tries to detect the current platform automatically, but examples
+and reproducible scripts should usually pass a platform string.
+
+```{r}
+detect_package_manager("ubuntu-24.04")
+resolve_platform("noble")
+```
+
+Common platform strings:
+
+| Distribution | `<distro>-<version>`        | Codename alias |
+|--------------|-----------------------------|----------------|
+| Ubuntu       | `ubuntu-22.04`              | `jammy`        |
+| Ubuntu       | `ubuntu-24.04`              | `noble`        |
+| Ubuntu       | `ubuntu-26.04`              | `resolute`     |
+| Debian       | `debian-12`                 | `bookworm`     |
+| Debian       | `debian-13`                 | `trixie`       |
+| RHEL family  | `rockylinux-9`, `redhat-9`  |                |
+| Fedora       | `fedora-40`                 |                |
+| openSUSE/SLE | `opensuse156`, `sle-15.6`   |                |
+
+## Start with setup advice
+
+`setup_advice()` produces a practical checklist for a Linux platform.
+
+```{r, eval = FALSE}
+setup_advice(platform = "ubuntu-24.04")
+```
+
+The advice has four layers:
+
+1. **Posit Package Manager**, when a binary repository URL is known.
+2. **Source build tools** such as `r-base-dev`, compilers, `make`, and
+   `pkg-config`.
+3. **Optional R Project operating system repository commands** for supported
+   Ubuntu, Debian, and Fedora systems.
+4. **Package-specific system requirements** when package names are supplied.
+
+The R Project operating system repository layer is optional because it changes
+the operating system repository configuration. It is most relevant when the
+system R version is too old. It is not the first fix for every missing library.
+
+To include package-specific requirements:
+
+```{r, eval = FALSE}
+setup_advice(
+  packages = c("xml2", "curl"),
+  platform = "ubuntu-24.04"
+)
+```
+
+To write a reviewable shell script:
+
+```{r, eval = FALSE}
+setup_advice(
+  packages = c("xml2", "curl"),
+  platform = "ubuntu-24.04",
+  script = "setup-sysreqr.sh"
+)
+```
+
+The script contains source build tools and package system requirements as
+active commands. Optional operating system repository commands are included as
+comments because they should be reviewed first.
+
+## Use Posit Package Manager
+
+Binary R packages are the simplest way to avoid source compilation problems.
+
+Build a Posit Package Manager repository URL:
+
+```{r}
+ppm_repo(platform = "ubuntu-24.04")
+```
+
+Preview the `.Rprofile` lines that would point R at that repository:
+
+```{r}
+use_ppm(platform = "ubuntu-24.04", dry_run = TRUE)
+```
+
+`use_ppm()` does not edit files unless `dry_run = FALSE`.
+
+When network access is available, these helpers query Posit Package Manager
+support and system requirement data live:
+
+```{r, eval = FALSE}
+check_ppm("ubuntu-22.04")
+ppm_platforms()
+ppm_sysreqs(c("xml2", "curl"), platform = "ubuntu-22.04")
+```
+
+## Check packages before installing
+
+`check_packages()` returns a `sysreqr_plan`. The plan is a data frame with the
+R package, system requirement, installable system package, install script,
+platform, package manager, installed status when available, source,
+confidence, and notes.
+
+```{r}
+plan <- check_packages(
+  c("xml2", "curl"),
+  platform = "ubuntu-22.04"
+)
+plan
+```
+
+Turn the plan into common outputs:
+
+```{r}
+install_command(plan)
+```
+
+```{r, eval = FALSE}
+write_install_script(plan, "install-sysreqs.sh")
+dockerfile(plan)
+github_actions(plan)
+```
+
+Write files for review or automation:
+
+```{r, eval = FALSE}
+write_report(plan, "SYSREQS.md")
+write_json(plan, "sysreqs.json")
+```
+
+Create a message for an administrator:
+
+```{r, eval = FALSE}
+admin_request(plan)
+```
+
+Inspect or explain a plan:
+
+```{r, eval = FALSE}
+as_data_frame(plan)
+as_install_plan(plan)
+is_sysreqr_plan(plan)
+explain(plan)
+```
+
+## Pick a backend
+
+`check_packages()` accepts four backend modes.
+
+* `backend = "auto"` uses bundled data for simple, known CRAN packages on
+  `apt` platforms, then Package Manager, then `pak` when possible.
+* `backend = "bundled"` uses only the static database shipped with the
+  installed `sysreqr` release. Currently optimized for `apt`.
+* `backend = "ppm"` uses the Posit Package Manager API when network access is
+  available.
+* `backend = "pak"` uses `pak::pkg_sysreqs()` when `pak` is installed.
+
+`sysreqr` has zero runtime dependencies. Optional live backends (`ppm`, `pak`)
+are used only when requested and available.
+
+## See also
+
+* `vignette("diagnosing-failures")` for post-failure log diagnosis.
+* `vignette("linux-fundamentals")` for a GNU/Linux primer.
+* `vignette("docker-and-ci")` for container and CI workflows.
+* `vignette("faq")` for frequently asked questions.
