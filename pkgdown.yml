@@ -1,0 +1,13 @@
+pandoc: 3.8.3
+pkgdown: 2.2.0
+pkgdown_sha: ~
+articles:
+  diagnosing-failures: diagnosing-failures.html
+  docker-and-ci: docker-and-ci.html
+  faq: faq.html
+  linux-fundamentals: linux-fundamentals.html
+  preflight-setup: preflight-setup.html
+last_built: 2026-05-28T00:55Z
+urls:
+  reference: https://choxos.github.io/sysreqR/reference
+  article: https://choxos.github.io/sysreqR/articles

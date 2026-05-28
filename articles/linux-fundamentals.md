@@ -1,0 +1,198 @@
+# GNU/Linux fundamentals for R users
+
+This vignette is for R users who are new to GNU/Linux. It explains the
+concepts that make `sysreqr`’s recommendations easier to act on. If you
+already use `apt` or `dnf` daily, you can skip to other vignettes.
+
+## What is a Linux distribution?
+
+A Linux *distribution* (or *distro*) bundles the Linux kernel with a set
+of user-space tools, a package manager, default configurations, and a
+release schedule. The distribution is what you actually install on a
+server or workstation.
+
+R cares about distributions because:
+
+- The system packages it needs (libraries, headers, compilers) come from
+  the distribution’s package manager, not from CRAN.
+- Each distribution has its own naming conventions for the same library.
+- Each distribution has its own release cycle and its own snapshot of
+  available software.
+
+The distributions `sysreqr` understands well:
+
+- **Ubuntu** (Debian-derived; LTS releases every two years). Codenames
+  you will see: `jammy` (22.04), `noble` (24.04), `resolute` (26.04).
+- **Debian** (the upstream). Codenames: `bookworm` (12), `trixie` (13).
+- **Red Hat Enterprise Linux (RHEL)** and binary-compatible rebuilds:
+  **Rocky Linux**, **AlmaLinux**.
+- **Fedora** (Red Hat’s upstream, fast-moving).
+- **CentOS** 7 (legacy; the CentOS Stream model replaced it).
+- **openSUSE** and **SUSE Linux Enterprise (SLE)**.
+- **Alpine** (small, common in Docker images).
+
+## Package managers
+
+A package manager installs, updates, and removes system software from a
+trusted repository.
+
+| Distribution             | Package manager | Lower-level tool |
+|--------------------------|-----------------|------------------|
+| Debian / Ubuntu          | `apt`           | `dpkg`           |
+| Fedora / RHEL 8+ / Rocky | `dnf`           | `rpm`            |
+| CentOS 7 / older RHEL    | `yum`           | `rpm`            |
+| openSUSE / SLE           | `zypper`        | `rpm`            |
+| Alpine                   | `apk`           | (none)           |
+| macOS (Homebrew)         | `brew`          | (none)           |
+
+`sysreqr` outputs commands that match the platform’s package manager.
+
+### Equivalents for common operations
+
+| Operation | apt | dnf / yum | zypper | apk |
+|----|----|----|----|----|
+| Refresh package lists | `sudo apt-get update` | (automatic) | `sudo zypper refresh` | `sudo apk update` |
+| Install package(s) | `sudo apt-get install -y X` | `sudo dnf install -y X` | `sudo zypper --non-interactive install X` | `sudo apk add X` |
+| Search | `apt-cache search X` | `dnf search X` | `zypper search X` | `apk search X` |
+| Show info | `apt-cache show X` | `dnf info X` | `zypper info X` | `apk info X` |
+| List installed | `dpkg -l` | `rpm -qa` | `rpm -qa` | `apk list -I` |
+| Remove | `sudo apt-get remove X` | `sudo dnf remove X` | `sudo zypper remove X` | `sudo apk del X` |
+
+## `sudo` and root
+
+Most distributions ship with a *root* (administrator) account that owns
+system files. Regular users cannot install system packages directly. The
+`sudo` command runs one command as root, after asking for the user’s
+password.
+
+``` sh
+sudo apt-get install -y libxml2-dev
+```
+
+You will see `sudo` in every install command `sysreqr` generates that
+touches system state. Two important consequences:
+
+1.  If you are on a shared server **without** `sudo`, you cannot install
+    system packages yourself. Use
+    [`admin_request()`](https://choxos.github.io/sysreqR/reference/admin_request.md)
+    to draft a message to your administrator instead.
+2.  `sudo` does **not** make `R CMD install` itself need root. Library
+    paths inside the user’s home directory should not be installed as
+    root.
+
+## The `-dev` and `-devel` story
+
+R packages that compile from source need *development headers*, the `.h`
+files that describe a library’s interface. On Debian and Ubuntu, the
+header package has the `-dev` suffix; on Fedora-style systems, `-devel`.
+
+For `libxml2`:
+
+| Need                           | Debian/Ubuntu (`apt`) | Fedora/RHEL (`dnf`) |
+|--------------------------------|-----------------------|---------------------|
+| Run programs linked to libxml2 | `libxml2`             | `libxml2`           |
+| Compile against libxml2        | `libxml2-dev`         | `libxml2-devel`     |
+
+`sysreqr` will pick the right name for the platform. Sometimes a CRAN
+package needs both a runtime library and a separate tool (like
+`pkg-config`); the plan reports each one.
+
+## `pkg-config`
+
+When an R package is built from source, the build script asks
+`pkg-config` where to find the system library. `pkg-config` reads small
+`.pc` files that each `-dev` / `-devel` package installs.
+
+A typical sign of a missing `-dev` package is an R build error like:
+
+    Package libxml-2.0 was not found in the pkg-config search path.
+    Perhaps you should add the directory containing `libxml-2.0.pc'
+    to the PKG_CONFIG_PATH environment variable.
+
+[`sysreqr::diagnose_log()`](https://choxos.github.io/sysreqR/reference/diagnose_log.md)
+will translate this back to the missing system package.
+
+## Binaries vs. source
+
+CRAN serves *source* tarballs. When you `install.packages("xml2")`, R
+may:
+
+- Download a pre-built **binary** appropriate to your OS and R version
+  (typical on Windows and macOS), or
+- Download the source and compile it locally (typical on Linux).
+
+Compiling from source is where most “missing system library” failures
+come from. Two strategies to avoid them:
+
+1.  **Use binary R packages**: on Linux, point R at the [Posit Package
+    Manager](https://packagemanager.posit.co/) binary repository for
+    your distribution.
+    [`sysreqr::use_ppm()`](https://choxos.github.io/sysreqR/reference/use_ppm.md)
+    produces the `.Rprofile` lines for that.
+2.  **Install the right -dev packages first**:
+    [`sysreqr::setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
+    and
+    [`sysreqr::check_packages()`](https://choxos.github.io/sysreqR/reference/check_packages.md)
+    will list them.
+
+## How `sysreqr` fits in
+
+`sysreqr` does *not* run `sudo`, does *not* edit operating system files,
+and does *not* install anything. It:
+
+- detects your platform,
+- tells you what system packages you (or your administrator) need to
+  install,
+- prints an exact command for your distribution,
+- writes that command to a reviewable script when you ask it to,
+- generates Dockerfile or GitHub Actions snippets when you want to
+  automate.
+
+You stay in control.
+
+## Common gotchas
+
+- **Forgetting `apt-get update`.** On Debian-derived systems, the
+  package list is cached. After a fresh container start, or after the
+  cache expires, `apt-get install` will fail until you refresh.
+- **Slim Docker images.** Images like `rocker/r-ver` use
+  `--no-install-recommends` to keep the image small. The Dockerfile
+  snippet emitted by
+  [`sysreqr::dockerfile()`](https://choxos.github.io/sysreqR/reference/dockerfile.md)
+  follows the same pattern.
+- **`pkg-config` not installed.** Many R packages assume it is present.
+  [`setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
+  adds it to the build-tools step.
+- **Mixing R sources.** Installing R from the distribution repository
+  and from the R Project repository at the same time can lead to two
+  different R installations with two different libraries. Pick one.
+- **Inside a container, the host’s package manager is irrelevant.** If
+  you are building a Docker image from `rocker/r-ver:4.4`, the container
+  is Debian-based, even if your laptop runs Fedora. Always specify the
+  `platform` argument to `sysreqr` functions when working inside a
+  container.
+
+## Glossary
+
+- **Codename**: a memorable name for a distribution version,
+  e.g. `noble` for Ubuntu 24.04.
+- **LTS**: long-term support. Ubuntu LTS releases (22.04, 24.04, 26.04,
+  …) get five years of free updates.
+- **CRAN**: the Comprehensive R Archive Network, where R packages come
+  from.
+- **Repository (apt)**: a server with `.deb` packages.
+- **Repository (dnf)**: a server with `.rpm` packages.
+- **Repository (R)**: a server with R package tarballs.
+- **`-dev` / `-devel`**: package suffix for development headers.
+- **`pkg-config`**: a helper used during builds to locate system
+  libraries.
+- **`sudo`**: command that runs one command as root.
+
+## See also
+
+- [`vignette("preflight-setup")`](https://choxos.github.io/sysreqR/articles/preflight-setup.md)
+  for the standard preflight workflow.
+- [`vignette("docker-and-ci")`](https://choxos.github.io/sysreqR/articles/docker-and-ci.md)
+  for container and CI workflows.
+- [`vignette("faq")`](https://choxos.github.io/sysreqR/articles/faq.md)
+  for frequently asked questions.
