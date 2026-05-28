@@ -104,7 +104,7 @@ print(advice)
 #>   sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/"
 #>   sudo apt install --no-install-recommends r-base
 #> 
-#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first.
+#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works.
 #> 
 #> 4. Package-specific system requirements
 #> R packages checked: xml2
@@ -150,7 +150,7 @@ setup_advice(
 #>   sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/"
 #>   sudo apt install --no-install-recommends r-base
 #> 
-#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first.
+#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works.
 #> 
 #> 4. Package-specific system requirements
 #> R packages checked: xml2, curl
@@ -158,6 +158,6 @@ setup_advice(
 #>   sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 #> 
 #> 
-#> Script written to: /tmp/RtmplqfgDf/file19c75cd56cb2.sh
+#> Script written to: /tmp/RtmpKqnp3x/file191513ca14cd.sh
 # }
 ```

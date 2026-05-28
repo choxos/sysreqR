@@ -94,6 +94,29 @@ First public release.
 - Every exported function has a runnable example.
 - Reference index grouped by topic on the pkgdown site.
 
+### Correctness and portability
+
+- Bundled system-package names are now portable across Debian and
+  Ubuntu: `default-libmysqlclient-dev` (was `libmysqlclient-dev`, which
+  does not exist on Debian), `libgsl-dev` (was `libgsl0-dev`), and
+  `libfreetype-dev` (was `libfreetype6-dev`).
+- [`detect_project_packages()`](https://choxos.github.io/sysreqR/reference/detect_project_packages.md)
+  now detects
+  [`requireNamespace()`](https://rdrr.io/r/base/ns-load.html) calls and
+  ignores package names that appear only in line comments.
+- [`setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
+  generates Debian repository setup using the modern deb822 `Signed-By`
+  keyring format (matching CRAN’s current Debian instructions), drops a
+  no-op Fedora `repoquery` line, and presents the Fedora COPR step as
+  optional.
+- Added AlmaLinux 9 and 10 as known platforms so
+  [`ppm_repo()`](https://choxos.github.io/sysreqR/reference/ppm_repo.md)
+  and
+  [`check_ppm()`](https://choxos.github.io/sysreqR/reference/check_ppm.md)
+  work for them.
+- The internal JSON parser now rejects unescaped control characters, per
+  the JSON specification.
+
 ### Design notes
 
 - `sysreqr` has **zero required dependencies**: no `Imports`, no

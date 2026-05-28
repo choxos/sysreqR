@@ -108,6 +108,16 @@
 <li>Reference index grouped by topic on the pkgdown site.</li>
 </ul></div>
 <div class="section level3">
+<h3 id="correctness-and-portability-0-1-0">Correctness and portability<a class="anchor" aria-label="anchor" href="#correctness-and-portability-0-1-0"></a></h3>
+<ul><li>Bundled system-package names are now portable across Debian and Ubuntu: <code>default-libmysqlclient-dev</code> (was <code>libmysqlclient-dev</code>, which does not exist on Debian), <code>libgsl-dev</code> (was <code>libgsl0-dev</code>), and <code>libfreetype-dev</code> (was <code>libfreetype6-dev</code>).</li>
+<li>
+<code><a href="../reference/detect_project_packages.html">detect_project_packages()</a></code> now detects <code><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace()</a></code> calls and ignores package names that appear only in line comments.</li>
+<li>
+<code><a href="../reference/setup_advice.html">setup_advice()</a></code> generates Debian repository setup using the modern deb822 <code>Signed-By</code> keyring format (matching CRAN’s current Debian instructions), drops a no-op Fedora <code>repoquery</code> line, and presents the Fedora COPR step as optional.</li>
+<li>Added AlmaLinux 9 and 10 as known platforms so <code><a href="../reference/ppm_repo.html">ppm_repo()</a></code> and <code><a href="../reference/check_ppm.html">check_ppm()</a></code> work for them.</li>
+<li>The internal JSON parser now rejects unescaped control characters, per the JSON specification.</li>
+</ul></div>
+<div class="section level3">
 <h3 id="design-notes-0-1-0">Design notes<a class="anchor" aria-label="anchor" href="#design-notes-0-1-0"></a></h3>
 <ul><li>
 <code>sysreqr</code> has <strong>zero required dependencies</strong>: no <code>Imports</code>, no <code>Depends</code> beyond base R. The <code>Suggests</code> field lists <code>testthat</code>, <code>knitr</code>, <code>rmarkdown</code>, and <code>withr</code>, used only for tests and vignette building; none of them are loaded at run time.</li>

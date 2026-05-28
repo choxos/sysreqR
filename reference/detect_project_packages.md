@@ -32,8 +32,9 @@ A character vector of package names.
 
 3.  `.R`, `.Rmd`, `.qmd`, and `NAMESPACE` files (looking for
     [`library()`](https://rdrr.io/r/base/library.html),
-    [`require()`](https://rdrr.io/r/base/library.html), and `pkg::fun`
-    references).
+    [`require()`](https://rdrr.io/r/base/library.html),
+    [`requireNamespace()`](https://rdrr.io/r/base/ns-load.html), and
+    `pkg::fun` references; line comments are ignored).
 
 ## See also
 
