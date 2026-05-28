@@ -254,11 +254,24 @@ list_installed_system_packages <- function(platform = NULL) {
   platform <- resolve_platform(platform)
   pm <- platform$package_manager
 
+  # Format arguments contain shell metacharacters ($, newline). system2()
+  # on Unix joins args without per-argument shell quoting, so the shell
+  # would otherwise expand ${Package} to empty and a literal newline in
+  # the arg would break the 2>/dev/null redirect. shQuote keeps the
+  # tokens intact when passed through the shell.
   out <- tryCatch({
     if (identical(pm, "apt") && nzchar(Sys.which("dpkg-query"))) {
-      system2("dpkg-query", c("-W", "-f=${Package}\n"), stdout = TRUE, stderr = FALSE)
+      system2(
+        "dpkg-query",
+        c("-W", shQuote("-f=${Package}\n")),
+        stdout = TRUE, stderr = FALSE
+      )
     } else if (pm %in% c("dnf", "yum", "zypper") && nzchar(Sys.which("rpm"))) {
-      system2("rpm", c("-qa", "--qf", "%{NAME}\n"), stdout = TRUE, stderr = FALSE)
+      system2(
+        "rpm",
+        c("-qa", "--qf", shQuote("%{NAME}\n")),
+        stdout = TRUE, stderr = FALSE
+      )
     } else if (identical(pm, "brew") && nzchar(Sys.which("brew"))) {
       system2("brew", "list", stdout = TRUE, stderr = FALSE)
     } else {
