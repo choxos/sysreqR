@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/choxos/sysreqR/blob/v0.1.0/inst/CITATION)
+[`inst/CITATION`](https://github.com/choxos/sysreqR/blob/main/inst/CITATION)
 
 Sofi-Mahmudi A (2026). sysreqr: Preflight Checks for R Package System
 Requirements. R package version 0.1.0.
