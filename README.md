@@ -239,3 +239,16 @@ Sofi-Mahmudi, A. (2026). *sysreqr: Preflight Checks for R Package System
 Requirements*. R package. <https://github.com/choxos/sysreqR>.
 
 ORCID: <https://orcid.org/0000-0001-6829-0823>.
+
+## Acknowledgments
+
+Portions of the package code, documentation, and tests were drafted and
+audited with the assistance of large language models: Anthropic's Claude
+Opus 4.7 Max (via [Claude Code](https://www.anthropic.com/claude-code))
+and OpenAI's ChatGPT 5.5 xhigh (via [Codex](https://openai.com/codex/)).
+All design decisions and the final review and validation were performed
+by the named author, who takes responsibility for the package's contents.
+
+## License
+
+GPL-3. See <https://www.gnu.org/licenses/gpl-3.0> for the full license text.
