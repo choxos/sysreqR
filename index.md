@@ -41,6 +41,17 @@ pak::pak("choxos/sysreqR")
 `pak` is used here only as an installer. It is **not** a dependency of
 `sysreqr`.
 
+The development version does not build the vignettes by default. Read
+them on the [package
+website](https://choxos.github.io/sysreqR/articles/), or build them
+locally with:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("choxos/sysreqR", build_vignettes = TRUE)
+```
+
 ## Quick start
 
 ``` r
@@ -211,6 +222,9 @@ vignette("linux-fundamentals",   package = "sysreqr")  # for GNU/Linux newcomers
 vignette("docker-and-ci",        package = "sysreqr")
 vignette("faq",                  package = "sysreqr")
 ```
+
+If you installed the development version without vignettes, read them on
+the [package website](https://choxos.github.io/sysreqR/articles/).
 
 ## Supported platforms
 

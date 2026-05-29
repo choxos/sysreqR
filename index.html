@@ -92,11 +92,15 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"choxos/sysreqR"</span><span class="op">)</span></span></code></pre></div>
 <p><code>pak</code> is used here only as an installer. It is <strong>not</strong> a dependency of <code>sysreqr</code>.</p>
+<p>The development version does not build the vignettes by default. Read them on the <a href="https://choxos.github.io/sysreqR/articles/">package website</a>, or build them locally with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"choxos/sysreqR"</span>, build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/choxos/sysreqR" class="external-link">sysreqr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">plan</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/check_packages.html">check_packages</a></span><span class="op">(</span></span>
@@ -123,24 +127,24 @@
 <span><span class="co">#&gt;   sudo apt-get update</span></span>
 <span><span class="co">#&gt;   sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev</span></span></code></pre></div>
 <p>Turn the plan into install commands:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/install_command.html">install_command</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span></span></code></pre></div>
 <p>Or into a deployment snippet:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/dockerfile.html">dockerfile</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/github_actions.html">github_actions</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span></code></pre></div>
 <p>Or into an administrator request:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/admin_request.html">admin_request</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="setup-advice-for-new-linux-users">Setup advice for new Linux users<a class="anchor" aria-label="anchor" href="#setup-advice-for-new-linux-users"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/setup_advice.html">setup_advice</a></span><span class="op">(</span>platform <span class="op">=</span> <span class="st">"ubuntu-24.04"</span><span class="op">)</span></span></code></pre></div>
 <p>For package-specific setup advice and a reviewable shell script:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/setup_advice.html">setup_advice</a></span><span class="op">(</span></span>
 <span>  packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"ubuntu-24.04"</span>,</span>
@@ -152,13 +156,13 @@
 <h2 id="diagnose-failed-installations">Diagnose failed installations<a class="anchor" aria-label="anchor" href="#diagnose-failed-installations"></a>
 </h2>
 <p>After a failed install in the current R session:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/check_error.html">check_error</a></span><span class="op">(</span>platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span><span class="op">)</span></span></code></pre></div>
 <p>From a log file:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/diagnose_log.html">diagnose_log</a></span><span class="op">(</span><span class="st">"install.log"</span>, platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span><span class="op">)</span></span></code></pre></div>
 <p>If the failed package names are already known:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/diagnose_failed_packages.html">diagnose_failed_packages</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span></span>
@@ -169,10 +173,10 @@
 <h2 id="projects-and-libraries">Projects and libraries<a class="anchor" aria-label="anchor" href="#projects-and-libraries"></a>
 </h2>
 <p>Check a project directory (reads <code>renv.lock</code>, then <code>DESCRIPTION</code>, then source files):</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/check_project.html">check_project</a></span><span class="op">(</span><span class="st">"."</span><span class="op">)</span></span></code></pre></div>
 <p>Check installed packages:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/check_library.html">check_library</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/check_library.html">check_library</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -180,14 +184,14 @@
 <h2 id="posit-package-manager">Posit Package Manager<a class="anchor" aria-label="anchor" href="#posit-package-manager"></a>
 </h2>
 <p>Build a Linux binary repository URL:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ppm_repo.html">ppm_repo</a></span><span class="op">(</span>platform <span class="op">=</span> <span class="st">"ubuntu-24.04"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "https://packagemanager.posit.co/cran/__linux__/noble/latest"</span></span></code></pre></div>
 <p>Preview the <code>.Rprofile</code> lines that would point R at it:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/use_ppm.html">use_ppm</a></span><span class="op">(</span>platform <span class="op">=</span> <span class="st">"ubuntu-24.04"</span>, dry_run <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Query live system requirement data when network access is available:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ppm_sysreqs.html">ppm_sysreqs</a></span><span class="op">(</span></span>
 <span>  packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span></span>
@@ -197,12 +201,13 @@
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
 <p>The package ships five focused vignettes:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"preflight-setup"</span>,      package <span class="op">=</span> <span class="st">"sysreqr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"diagnosing-failures"</span>,  package <span class="op">=</span> <span class="st">"sysreqr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"linux-fundamentals"</span>,   package <span class="op">=</span> <span class="st">"sysreqr"</span><span class="op">)</span>  <span class="co"># for GNU/Linux newcomers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"docker-and-ci"</span>,        package <span class="op">=</span> <span class="st">"sysreqr"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"faq"</span>,                  package <span class="op">=</span> <span class="st">"sysreqr"</span><span class="op">)</span></span></code></pre></div>
+<p>If you installed the development version without vignettes, read them on the <a href="https://choxos.github.io/sysreqR/articles/">package website</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="supported-platforms">Supported platforms<a class="anchor" aria-label="anchor" href="#supported-platforms"></a>
