@@ -5,13 +5,12 @@
   ver <- utils::packageVersion(pkgname)
   msg <- c(
     sprintf("sysreqr %s", ver),
-    "GitHub: https://github.com/choxos/sysreqR",
-    "Docs:   https://choxos.github.io/sysreqR/",
     "",
-    "New here? Start with:",
-    "  setup_advice(platform = \"ubuntu-24.04\")",
-    "  vignette(\"preflight-setup\", package = \"sysreqr\")",
-    "  vignette(\"linux-fundamentals\", package = \"sysreqr\")",
+    "New here? Try setup_advice(platform = \"ubuntu-24.04\"),",
+    "or help(package = \"sysreqr\") for the function reference.",
+    "",
+    "Guides and articles: https://choxos.github.io/sysreqR/articles/",
+    "Source and issues:   https://github.com/choxos/sysreqR",
     "",
     "Suppress this message with suppressPackageStartupMessages()."
   )
