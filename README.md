@@ -256,7 +256,7 @@ ORCID: <https://orcid.org/0000-0001-6829-0823>.
 
 Portions of the package code, documentation, and tests were drafted and
 audited with the assistance of large language models: Anthropic's Claude
-Opus 4.7 Max (via [Claude Code](https://www.anthropic.com/claude-code))
+Opus 4.7 Max (via [Claude Code](https://claude.com/product/claude-code))
 and OpenAI's ChatGPT 5.5 xhigh (via [Codex](https://openai.com/codex/)).
 All design decisions and the final review and validation were performed
 by the named author, who takes responsibility for the package's contents.
