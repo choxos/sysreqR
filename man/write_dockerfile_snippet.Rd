@@ -4,7 +4,7 @@
 \alias{write_dockerfile_snippet}
 \title{Write a Dockerfile snippet}
 \usage{
-write_dockerfile_snippet(plan, path = "Dockerfile.sysreqs")
+write_dockerfile_snippet(plan, path)
 }
 \arguments{
 \item{plan}{A \code{sysreqr_plan}.}

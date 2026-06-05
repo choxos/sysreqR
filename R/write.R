@@ -32,7 +32,7 @@ write_json <- function(plan, path) {
 #' @examples
 #' plan <- check_packages("xml2", platform = "ubuntu-22.04")
 #' write_report(plan, file.path(tempdir(), "SYSREQS.md"))
-write_report <- function(plan, path = "SYSREQS.md") {
+write_report <- function(plan, path) {
   plan <- ensure_plan(plan)
   pkgs <- plan_system_packages(plan, missing_only = TRUE)
   rpkgs <- compact_chr(plan$r_package)
@@ -77,7 +77,7 @@ write_report <- function(plan, path = "SYSREQS.md") {
 #' @examples
 #' plan <- check_packages("xml2", platform = "ubuntu-22.04")
 #' write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
-write_install_script <- function(plan, path = "install-sysreqs.sh") {
+write_install_script <- function(plan, path) {
   plan <- ensure_plan(plan)
   commands <- install_command(plan, sudo = TRUE)
   if (!length(commands)) {
@@ -108,7 +108,7 @@ write_install_script <- function(plan, path = "install-sysreqs.sh") {
 #' @examples
 #' plan <- check_packages("xml2", platform = "ubuntu-22.04")
 #' write_dockerfile_snippet(plan, file.path(tempdir(), "Dockerfile.sysreqs"))
-write_dockerfile_snippet <- function(plan, path = "Dockerfile.sysreqs") {
+write_dockerfile_snippet <- function(plan, path) {
   plan <- ensure_plan(plan)
   writeLines(dockerfile(plan), path)
   invisible(path)

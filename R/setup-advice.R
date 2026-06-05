@@ -357,7 +357,7 @@ setup_r_project_advice <- function(platform) {
       notes = paste(
         "Fedora provides R through the system package manager.",
         "The optional iucar/cran COPR repository adds binary RPMs for many more CRAN",
-        "packages; R-CoprManager integrates it with install.packages()."
+        "packages; R-CoprManager integrates it with R's package installation workflow."
       )
     ))
   }

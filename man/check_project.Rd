@@ -31,10 +31,13 @@ Convenience wrapper around \code{\link[=detect_project_packages]{detect_project_
 \code{\link[=check_packages]{check_packages()}}.
 }
 \examples{
-\dontrun{
-check_project(".")
-check_project(".", platform = "ubuntu-22.04", backend = "ppm")
-}
+project <- file.path(tempdir(), "demo-project")
+dir.create(project, showWarnings = FALSE)
+writeLines(
+  c("Package: demo", "Imports: xml2"),
+  file.path(project, "DESCRIPTION")
+)
+check_project(project, platform = "ubuntu-22.04", backend = "bundled")
 }
 \seealso{
 Other preflight:

@@ -29,10 +29,13 @@ comments are ignored).
 }
 }
 \examples{
-\dontrun{
-detect_project_packages(".")
-detect_project_packages(".", include_suggests = TRUE)
-}
+project <- file.path(tempdir(), "demo-project")
+dir.create(project, showWarnings = FALSE)
+writeLines(
+  c("Package: demo", "Imports: xml2, curl"),
+  file.path(project, "DESCRIPTION")
+)
+detect_project_packages(project)
 }
 \seealso{
 Other preflight:

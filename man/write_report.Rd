@@ -4,7 +4,7 @@
 \alias{write_report}
 \title{Write a Markdown report}
 \usage{
-write_report(plan, path = "SYSREQS.md")
+write_report(plan, path)
 }
 \arguments{
 \item{plan}{A \code{sysreqr_plan}.}

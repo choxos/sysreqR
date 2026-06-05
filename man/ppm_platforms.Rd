@@ -17,7 +17,7 @@ Queries the Posit Package Manager \verb{/__api__/status} endpoint and returns a
 data frame of supported distributions.
 }
 \examples{
-\dontrun{
+\donttest{
 ppm_platforms()
 }
 }

@@ -49,7 +49,7 @@ ppm_api_get <- function(endpoint, query = list(), base_url = ppm_default_base_ur
 #' @family ppm
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ppm_platforms()
 #' }
 ppm_platforms <- function(base_url = ppm_default_base_url()) {
@@ -69,7 +69,7 @@ ppm_platforms <- function(base_url = ppm_default_base_url()) {
 #' @family ppm
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' check_ppm("ubuntu-22.04")
 #' check_ppm("fedora-40")
 #' }
@@ -145,7 +145,7 @@ ppm_repo <- function(platform = NULL, repo = "cran", snapshot = "latest",
 #' @family ppm
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ppm_sysreqs(c("xml2", "curl"), platform = "ubuntu-22.04")
 #' }
 ppm_sysreqs <- function(packages = NULL, all = FALSE, platform = NULL,
@@ -290,7 +290,8 @@ normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
 #' Emits or installs the R code lines that point `options(repos)` at a Posit
 #' Package Manager binary repository. With `dry_run = TRUE` (the default),
 #' the lines are returned without touching any file, so the user can review
-#' them before applying.
+#' them before applying. When `dry_run = FALSE`, `path` must be supplied
+#' explicitly.
 #'
 #' @param scope `"user"` edits the user `.Rprofile`, `"project"` edits the
 #'   current project `.Rprofile`.
@@ -298,7 +299,7 @@ normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
 #' @param repo Repository name.
 #' @param dry_run If `TRUE`, return the lines that would be written without
 #'   editing files.
-#' @param path Optional explicit `.Rprofile` path.
+#' @param path Explicit `.Rprofile` path used when `dry_run = FALSE`.
 #'
 #' @return The configuration lines, invisibly when written.
 #' @family ppm
@@ -306,10 +307,13 @@ normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
 #' @examples
 #' use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)
 #'
-#' \dontrun{
-#' # Actually writes to the user .Rprofile:
-#' use_ppm("user", platform = "ubuntu-22.04", dry_run = FALSE)
-#' }
+#' # Write to a throwaway .Rprofile under tempdir():
+#' use_ppm(
+#'   "user",
+#'   platform = "ubuntu-22.04",
+#'   dry_run = FALSE,
+#'   path = file.path(tempdir(), ".Rprofile")
+#' )
 use_ppm <- function(scope = c("user", "project"), platform = NULL, repo = "cran",
                     dry_run = TRUE, path = NULL) {
   scope <- match.arg(scope)
@@ -326,13 +330,9 @@ use_ppm <- function(scope = c("user", "project"), platform = NULL, repo = "cran"
     return(lines)
   }
 
-  path <- path %||% (
-    if (identical(scope, "user")) {
-      file.path(path.expand("~"), ".Rprofile")
-    } else {
-      file.path(getwd(), ".Rprofile")
-    }
-  )
+  if (is.null(path)) {
+    stop("`path` must be supplied when `dry_run = FALSE`.", call. = FALSE)
+  }
 
   old <- read_lines_if_exists(path)
   writeLines(c(old, "", "# Added by sysreqr", lines), path)

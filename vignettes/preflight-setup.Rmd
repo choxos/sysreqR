@@ -86,7 +86,7 @@ To write a reviewable shell script:
 setup_advice(
   packages = c("xml2", "curl"),
   platform = "ubuntu-24.04",
-  script = "setup-sysreqr.sh"
+  script = file.path(tempdir(), "setup-sysreqr.sh")
 )
 ```
 
@@ -110,7 +110,8 @@ Preview the `.Rprofile` lines that would point R at that repository:
 use_ppm(platform = "ubuntu-24.04", dry_run = TRUE)
 ```
 
-`use_ppm()` does not edit files unless `dry_run = FALSE`.
+`use_ppm()` does not edit files unless `dry_run = FALSE` and an explicit
+`path` is supplied.
 
 When network access is available, these helpers query Posit Package Manager
 support and system requirement data live:
@@ -143,7 +144,7 @@ install_command(plan)
 ```
 
 ```{r, eval = FALSE}
-write_install_script(plan, "install-sysreqs.sh")
+write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 dockerfile(plan)
 github_actions(plan)
 ```
@@ -151,8 +152,8 @@ github_actions(plan)
 Write files for review or automation:
 
 ```{r, eval = FALSE}
-write_report(plan, "SYSREQS.md")
-write_json(plan, "sysreqs.json")
+write_report(plan, file.path(tempdir(), "SYSREQS.md"))
+write_json(plan, file.path(tempdir(), "sysreqs.json"))
 ```
 
 Create a message for an administrator:

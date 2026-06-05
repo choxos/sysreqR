@@ -38,7 +38,7 @@ bundled database and records the failure in the
 \code{"fallback_error"} attribute of the returned plan.
 }
 \examples{
-\dontrun{
+\donttest{
 ppm_sysreqs(c("xml2", "curl"), platform = "ubuntu-22.04")
 }
 }

@@ -4,7 +4,7 @@
 \alias{write_install_script}
 \title{Write an install script}
 \usage{
-write_install_script(plan, path = "install-sysreqs.sh")
+write_install_script(plan, path)
 }
 \arguments{
 \item{plan}{A \code{sysreqr_plan}.}

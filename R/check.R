@@ -25,11 +25,6 @@
 #' plan
 #'
 #' install_command(plan)
-#'
-#' \dontrun{
-#' # Network-dependent: queries Posit Package Manager.
-#' check_packages("xml2", platform = "ubuntu-22.04", backend = "ppm")
-#' }
 check_packages <- function(packages, platform = NULL,
                            backend = c("auto", "bundled", "ppm", "pak"),
                            repo = "cran", dependencies = NA,
@@ -133,7 +128,7 @@ pak_pkg_sysreqs <- function(...) {
     stop(
       paste(
         "The `pak` package is required for the pak backend.",
-        "Install it with install.packages(\"pak\")."
+        "Install the `pak` package before using this backend."
       ),
       call. = FALSE
     )
@@ -233,12 +228,7 @@ install_script_for_package <- function(system_package, platform) {
 #' @family preflight
 #' @export
 #' @examples
-#' \dontrun{
-#' # Audits the default library:
-#' check_library()
-#' }
-#'
-#' # With an explicit package list (offline, bundled backend):
+#' # Offline, with an explicit package list and the bundled backend:
 #' check_library(
 #'   packages = c("xml2", "curl"),
 #'   platform = "ubuntu-22.04",
@@ -249,8 +239,7 @@ check_library <- function(packages = NULL, library = .libPaths()[1],
                           backend = c("bundled", "auto", "ppm", "pak")) {
   backend <- match.arg(backend)
   if (is.null(packages)) {
-    installed <- utils::installed.packages(lib.loc = library, noCache = TRUE)
-    packages <- rownames(installed)
+    packages <- .packages(all.available = TRUE, lib.loc = library)
   }
 
   packages <- compact_chr(as.character(packages))

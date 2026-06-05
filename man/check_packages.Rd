@@ -46,11 +46,6 @@ plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")
 plan
 
 install_command(plan)
-
-\dontrun{
-# Network-dependent: queries Posit Package Manager.
-check_packages("xml2", platform = "ubuntu-22.04", backend = "ppm")
-}
 }
 \seealso{
 \code{\link[=check_project]{check_project()}}, \code{\link[=check_library]{check_library()}}, \code{\link[=diagnose_log]{diagnose_log()}}.

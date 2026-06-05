@@ -105,3 +105,11 @@ test_that("use_ppm writes to a path when dry_run is FALSE", {
   expect_true(any(grepl("packagemanager.posit.co", content, fixed = TRUE)))
   expect_true(any(grepl("packagemanager.posit.co", result, fixed = TRUE)))
 })
+
+test_that("use_ppm requires an explicit path when dry_run is FALSE", {
+  expect_error(
+    use_ppm("user", platform = "ubuntu-22.04", dry_run = FALSE),
+    "`path` must be supplied",
+    fixed = TRUE
+  )
+})

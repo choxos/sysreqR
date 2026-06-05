@@ -17,10 +17,13 @@
 #' @family preflight
 #' @export
 #' @examples
-#' \dontrun{
-#' detect_project_packages(".")
-#' detect_project_packages(".", include_suggests = TRUE)
-#' }
+#' project <- file.path(tempdir(), "demo-project")
+#' dir.create(project, showWarnings = FALSE)
+#' writeLines(
+#'   c("Package: demo", "Imports: xml2, curl"),
+#'   file.path(project, "DESCRIPTION")
+#' )
+#' detect_project_packages(project)
 detect_project_packages <- function(path = ".", include_suggests = FALSE) {
   path <- normalizePath(path, mustWork = TRUE)
 
@@ -58,10 +61,13 @@ detect_project_packages <- function(path = ".", include_suggests = FALSE) {
 #' @family preflight
 #' @export
 #' @examples
-#' \dontrun{
-#' check_project(".")
-#' check_project(".", platform = "ubuntu-22.04", backend = "ppm")
-#' }
+#' project <- file.path(tempdir(), "demo-project")
+#' dir.create(project, showWarnings = FALSE)
+#' writeLines(
+#'   c("Package: demo", "Imports: xml2"),
+#'   file.path(project, "DESCRIPTION")
+#' )
+#' check_project(project, platform = "ubuntu-22.04", backend = "bundled")
 check_project <- function(path = ".", include_suggests = FALSE,
                           platform = NULL,
                           backend = c("auto", "bundled", "ppm", "pak"),

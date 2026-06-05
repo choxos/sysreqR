@@ -1,5 +1,5 @@
 Package: sysreqr
-Title: Preflight Checks for R Package System Requirements
+Title: Preflight Checks for 'R' Package System Requirements
 Version: 0.1.0
 Authors@R: c(
     person(
@@ -9,10 +9,10 @@ Authors@R: c(
       comment = c(ORCID = "0000-0001-6829-0823")
     )
   )
-Description: Helps users on Linux (and, where applicable, macOS) find the
-    system packages they need before installing R packages from source. Queries
+Description: Helps users on 'Linux' (and, where applicable, 'macOS') find the
+    system packages they need before installing 'R' packages from source. Queries
     maintained system requirement sources, reports missing system packages,
-    and generates installation commands, Dockerfile snippets, GitHub Actions
+    and generates installation commands, 'Dockerfile' snippets, 'GitHub Actions'
     steps, administrator request templates, and diagnostic reports from failed
     installation logs.
 License: GPL-3

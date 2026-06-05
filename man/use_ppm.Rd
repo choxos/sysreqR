@@ -23,7 +23,7 @@ current project \code{.Rprofile}.}
 \item{dry_run}{If \code{TRUE}, return the lines that would be written without
 editing files.}
 
-\item{path}{Optional explicit \code{.Rprofile} path.}
+\item{path}{Explicit \code{.Rprofile} path used when \code{dry_run = FALSE}.}
 }
 \value{
 The configuration lines, invisibly when written.
@@ -32,15 +32,19 @@ The configuration lines, invisibly when written.
 Emits or installs the R code lines that point \code{options(repos)} at a Posit
 Package Manager binary repository. With \code{dry_run = TRUE} (the default),
 the lines are returned without touching any file, so the user can review
-them before applying.
+them before applying. When \code{dry_run = FALSE}, \code{path} must be supplied
+explicitly.
 }
 \examples{
 use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)
 
-\dontrun{
-# Actually writes to the user .Rprofile:
-use_ppm("user", platform = "ubuntu-22.04", dry_run = FALSE)
-}
+# Write to a throwaway .Rprofile under tempdir():
+use_ppm(
+  "user",
+  platform = "ubuntu-22.04",
+  dry_run = FALSE,
+  path = file.path(tempdir(), ".Rprofile")
+)
 }
 \seealso{
 Other ppm:

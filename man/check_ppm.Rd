@@ -19,7 +19,7 @@ Reports whether a platform is currently served by Posit Package Manager
 and whether it has system requirement metadata and binary packages.
 }
 \examples{
-\dontrun{
+\donttest{
 check_ppm("ubuntu-22.04")
 check_ppm("fedora-40")
 }
