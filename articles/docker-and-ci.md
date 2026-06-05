@@ -83,7 +83,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . /src
 WORKDIR /src
-RUN R -e 'install.packages(c("xml2", "curl"))'
+RUN Rscript install-r-dependencies.R
 
 # ---- Stage 2: runtime ----
 FROM rocker/r-ver:4.4
@@ -196,7 +196,7 @@ For Jenkins, Drone, or shell-driven CI, write the install script once:
 
 ``` r
 
-write_install_script(plan, "ci/install-sysreqs.sh")
+write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 ```
 
 Then call `sh ci/install-sysreqs.sh` from any CI runner.

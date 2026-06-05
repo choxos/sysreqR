@@ -76,11 +76,10 @@
 <div class="section level2">
 <h2 id="when-the-preflight-check-did-not-happen">When the preflight check did not happen<a class="anchor" aria-label="anchor" href="#when-the-preflight-check-did-not-happen"></a>
 </h2>
-<p>Sometimes preflight checks do not happen. A user runs
-<code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code>, a package compiles from source, and the
-installation fails. The useful next step is to turn the error into a
-small list of likely system packages, not to ask the user to read a long
-compiler log alone.</p>
+<p>Sometimes preflight checks do not happen. A user starts an R package
+install, a package compiles from source, and the installation fails. The
+useful next step is to turn the error into a small list of likely system
+packages, not to ask the user to read a long compiler log alone.</p>
 <p><code>sysreqr</code> has two diagnosis paths:</p>
 <ul>
 <li>
@@ -194,14 +193,14 @@ as in the preflight workflow:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diagnose_log.html">diagnose_log</a></span><span class="op">(</span><span class="st">"install.log"</span>, platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/install_command.html">install_command</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/admin_request.html">admin_request</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_report.html">write_report</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"SYSREQS.md"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/write_report.html">write_report</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"SYSREQS.md"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>For automation:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/dockerfile.html">dockerfile</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/github_actions.html">github_actions</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_json.html">write_json</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"sysreqs.json"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/write_json.html">write_json</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"sysreqs.json"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>For explanation:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/explain.html">explain</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
@@ -265,7 +264,7 @@ chasing one error at a time:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/setup_advice.html">setup_advice</a></span><span class="op">(</span></span>
 <span>  packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span>,</span>
-<span>  script <span class="op">=</span> <span class="st">"setup-sysreqr.sh"</span></span>
+<span>  script <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"setup-sysreqr.sh"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>That gives the user a broader checklist: binary R packages, source
 build tools, optional R Project operating system repositories, and

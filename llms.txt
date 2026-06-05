@@ -88,7 +88,7 @@ Turn the plan into install commands:
 ``` r
 
 install_command(plan)
-write_install_script(plan, "install-sysreqs.sh")
+write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 ```
 
 Or into a deployment snippet:
@@ -120,7 +120,7 @@ For package-specific setup advice and a reviewable shell script:
 setup_advice(
   packages = c("xml2", "curl"),
   platform = "ubuntu-24.04",
-  script = "setup-sysreqr.sh"
+  script = file.path(tempdir(), "setup-sysreqr.sh")
 )
 ```
 

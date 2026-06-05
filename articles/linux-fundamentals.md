@@ -114,7 +114,7 @@ will translate this back to the missing system package.
 
 ## Binaries vs. source
 
-CRAN serves *source* tarballs. When you `install.packages("xml2")`, R
+CRAN serves *source* tarballs. When R installs `xml2` from source, it
 may:
 
 - Download a pre-built **binary** appropriate to your OS and R version

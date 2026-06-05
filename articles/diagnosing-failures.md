@@ -2,10 +2,9 @@
 
 ## When the preflight check did not happen
 
-Sometimes preflight checks do not happen. A user runs
-[`install.packages()`](https://rdrr.io/r/utils/install.packages.html), a
-package compiles from source, and the installation fails. The useful
-next step is to turn the error into a small list of likely system
+Sometimes preflight checks do not happen. A user starts an R package
+install, a package compiles from source, and the installation fails. The
+useful next step is to turn the error into a small list of likely system
 packages, not to ask the user to read a long compiler log alone.
 
 `sysreqr` has two diagnosis paths:
@@ -138,9 +137,9 @@ preflight workflow:
 
 plan <- diagnose_log("install.log", platform = "ubuntu-22.04")
 install_command(plan)
-write_install_script(plan, "install-sysreqs.sh")
+write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 admin_request(plan)
-write_report(plan, "SYSREQS.md")
+write_report(plan, file.path(tempdir(), "SYSREQS.md"))
 ```
 
 For automation:
@@ -149,7 +148,7 @@ For automation:
 
 dockerfile(plan)
 github_actions(plan)
-write_json(plan, "sysreqs.json")
+write_json(plan, file.path(tempdir(), "sysreqs.json"))
 ```
 
 For explanation:
@@ -228,7 +227,7 @@ instead of chasing one error at a time:
 setup_advice(
   packages = c("xml2", "curl"),
   platform = "ubuntu-22.04",
-  script = "setup-sysreqr.sh"
+  script = file.path(tempdir(), "setup-sysreqr.sh")
 )
 ```
 

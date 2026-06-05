@@ -3,7 +3,8 @@
 Emits or installs the R code lines that point `options(repos)` at a
 Posit Package Manager binary repository. With `dry_run = TRUE` (the
 default), the lines are returned without touching any file, so the user
-can review them before applying.
+can review them before applying. When `dry_run = FALSE`, `path` must be
+supplied explicitly.
 
 ## Usage
 
@@ -40,7 +41,7 @@ use_ppm(
 
 - path:
 
-  Optional explicit `.Rprofile` path.
+  Explicit `.Rprofile` path used when `dry_run = FALSE`.
 
 ## Value
 

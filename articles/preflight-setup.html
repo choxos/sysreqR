@@ -213,7 +213,7 @@ for every missing library.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/setup_advice.html">setup_advice</a></span><span class="op">(</span></span>
 <span>  packages <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>,</span>
 <span>  platform <span class="op">=</span> <span class="st">"ubuntu-24.04"</span>,</span>
-<span>  script <span class="op">=</span> <span class="st">"setup-sysreqr.sh"</span></span>
+<span>  script <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"setup-sysreqr.sh"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The script contains source build tools and package system
 requirements as active commands. Optional operating system repository
@@ -239,7 +239,8 @@ repository:</p>
 <span><span class="co">#&gt; [4] "  )"                                                                       </span></span>
 <span><span class="co">#&gt; [5] ")"</span></span></code></pre></div>
 <p><code><a href="../reference/use_ppm.html">use_ppm()</a></code> does not edit files unless
-<code>dry_run = FALSE</code>.</p>
+<code>dry_run = FALSE</code> and an explicit <code>path</code> is
+supplied.</p>
 <p>When network access is available, these helpers query Posit Package
 Manager support and system requirement data live:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -283,13 +284,13 @@ installed status when available, source, confidence, and notes.</p>
 <span><span class="co">#&gt; [1] "sudo apt-get update"                                                </span></span>
 <span><span class="co">#&gt; [2] "sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev"</span></span></code></pre></div>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/dockerfile.html">dockerfile</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/github_actions.html">github_actions</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span></code></pre></div>
 <p>Write files for review or automation:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_report.html">write_report</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"SYSREQS.md"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/write_json.html">write_json</a></span><span class="op">(</span><span class="va">plan</span>, <span class="st">"sysreqs.json"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_report.html">write_report</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"SYSREQS.md"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/write_json.html">write_json</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"sysreqs.json"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Create a message for an administrator:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/admin_request.html">admin_request</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span></span></code></pre></div>
