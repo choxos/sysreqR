@@ -97,9 +97,4 @@ plan
 install_command(plan)
 #> [1] "sudo apt-get update"                                                
 #> [2] "sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev"
-
-if (FALSE) { # \dontrun{
-# Network-dependent: queries Posit Package Manager.
-check_packages("xml2", platform = "ubuntu-22.04", backend = "ppm")
-} # }
 ```

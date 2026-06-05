@@ -6,7 +6,7 @@ Writes a POSIX-shell install script. The script begins with
 ## Usage
 
 ``` r
-write_install_script(plan, path = "install-sysreqs.sh")
+write_install_script(plan, path)
 ```
 
 ## Arguments

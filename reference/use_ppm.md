@@ -64,8 +64,11 @@ use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)
 #> [4] "  )"                                                                       
 #> [5] ")"                                                                         
 
-if (FALSE) { # \dontrun{
-# Actually writes to the user .Rprofile:
-use_ppm("user", platform = "ubuntu-22.04", dry_run = FALSE)
-} # }
+# Write to a throwaway .Rprofile under tempdir():
+use_ppm(
+  "user",
+  platform = "ubuntu-22.04",
+  dry_run = FALSE,
+  path = file.path(tempdir(), ".Rprofile")
+)
 ```

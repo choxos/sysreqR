@@ -48,12 +48,7 @@ Other preflight:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Audits the default library:
-check_library()
-} # }
-
-# With an explicit package list (offline, bundled backend):
+# Offline, with an explicit package list and the bundled backend:
 check_library(
   packages = c("xml2", "curl"),
   platform = "ubuntu-22.04",

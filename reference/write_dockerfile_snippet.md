@@ -8,7 +8,7 @@ verbatim.
 ## Usage
 
 ``` r
-write_dockerfile_snippet(plan, path = "Dockerfile.sysreqs")
+write_dockerfile_snippet(plan, path)
 ```
 
 ## Arguments

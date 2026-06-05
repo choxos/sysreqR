@@ -55,8 +55,27 @@ Other preflight:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-check_project(".")
-check_project(".", platform = "ubuntu-22.04", backend = "ppm")
-} # }
+project <- file.path(tempdir(), "demo-project")
+dir.create(project, showWarnings = FALSE)
+writeLines(
+  c("Package: demo", "Imports: xml2"),
+  file.path(project, "DESCRIPTION")
+)
+check_project(project, platform = "ubuntu-22.04", backend = "bundled")
+#> System requirement preflight
+#> 
+#> Platform: Ubuntu 22.04
+#> Package manager: apt
+#> Backend: bundled
+#> 
+#> R packages checked:
+#>   xml2
+#> 
+#> System packages to install: 
+#>   libxml2-dev  needed by: xml2  status: unknown
+#> 
+#> Run:
+#>   sudo apt-get update
+#>   sudo apt-get install -y libxml2-dev
+#> 
 ```

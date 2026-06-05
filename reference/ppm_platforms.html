@@ -78,9 +78,120 @@ data frame of supported distributions.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu">ppm_platforms</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     name      os                   binaryDisplay      binaryURL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                centos7   linux                   CentOS/RHEL 7        centos7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                centos8   linux                   CentOS/RHEL 8        centos8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                  rhel9   linux                   Rocky Linux 9          rhel9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                 rhel10   linux                  Rocky Linux 10         rhel10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5             opensuse15   linux      OpenSUSE 15.1, SLES 15 SP1     opensuse15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6            opensuse152   linux      OpenSUSE 15.2, SLES 15 SP2    opensuse152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7            opensuse153   linux      OpenSUSE 15.3, SLES 15 SP3    opensuse153</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8            opensuse154   linux      OpenSUSE 15.4, SLES 15 SP4    opensuse154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9            opensuse155   linux      OpenSUSE 15.5, SLES 15 SP5    opensuse155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10           opensuse156   linux  OpenSUSE 15.6, SLES 15 SP6/SP7    opensuse156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11            opensuse42   linux      OpenSUSE 42.3, SLES 12 SP5     opensuse42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12                 rhel7   linux                   CentOS/RHEL 7        centos7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13                 rhel8   linux                          RHEL 8        centos8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  rhel9 (unused alias)   linux                          RHEL 9          rhel9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15 rhel10 (unused alias)   linux                         RHEL 10         rhel10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                sles12   linux      OpenSUSE 42.3, SLES 12 SP5     opensuse42</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                sles15   linux      OpenSUSE 15.1, SLES 15 SP1     opensuse15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18               sles152   linux      OpenSUSE 15.2, SLES 15 SP2    opensuse152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19               sles153   linux      OpenSUSE 15.3, SLES 15 SP3    opensuse153</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20               sles154   linux      OpenSUSE 15.4, SLES 15 SP4    opensuse154</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21               sles155   linux      OpenSUSE 15.5, SLES 15 SP5    opensuse155</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22               sles156   linux  OpenSUSE 15.6, SLES 15 SP6/SP7    opensuse156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23                xenial   linux           Ubuntu 16.04 (Xenial)         xenial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24                bionic   linux           Ubuntu 18.04 (Bionic)         bionic</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25                 focal   linux            Ubuntu 20.04 (Focal)          focal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26                 jammy   linux            Ubuntu 22.04 (Jammy)          jammy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27                 noble   linux            Ubuntu 24.04 (Noble)          noble</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28              resolute   linux         Ubuntu 26.04 (Resolute)       resolute</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29                buster   linux              Debian 10 (Buster)         buster</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30              bullseye   linux            Debian 11 (Bullseye)       bullseye</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31              bookworm   linux            Debian 12 (Bookworm)       bookworm</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32                trixie   linux              Debian 13 (Trixie)         trixie</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33               windows windows                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                 macos   macos                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35        manylinux_2_28   linux manylinux glibc 2.28+ (preview) manylinux_2_28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36              internal   linux                        internal       internal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                            display distribution release build_distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                         CentOS 7       centos       7                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                         CentOS 8       centos       8                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    Rocky Linux 9   rockylinux       9                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                   Rocky Linux 10   rockylinux      10                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    OpenSUSE 15.1     opensuse      15                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    OpenSUSE 15.2     opensuse    15.2                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7                    OpenSUSE 15.3     opensuse    15.3                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8                    OpenSUSE 15.4     opensuse    15.4                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9                    OpenSUSE 15.5     opensuse    15.5                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10                   OpenSUSE 15.6     opensuse    15.6                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11                   OpenSUSE 42.3     opensuse    42.3                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      Red Hat Enterprise Linux 7       redhat       7                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13      Red Hat Enterprise Linux 8       redhat       8                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14      Red Hat Enterprise Linux 9       redhat       9                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15     Red Hat Enterprise Linux 10       redhat      10                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16                     SLES 12 SP5          sle    12.3                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17                     SLES 15 SP1          sle      15                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18                     SLES 15 SP2          sle    15.2                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19                     SLES 15 SP3          sle    15.3                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20                     SLES 15 SP4          sle    15.4                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21                     SLES 15 SP5          sle    15.5                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22                 SLES 15 SP6/SP7          sle    15.6                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23           Ubuntu 16.04 (Xenial)       ubuntu   16.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24           Ubuntu 18.04 (Bionic)       ubuntu   18.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25            Ubuntu 20.04 (Focal)       ubuntu   20.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26            Ubuntu 22.04 (Jammy)       ubuntu   22.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27            Ubuntu 24.04 (Noble)       ubuntu   24.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28         Ubuntu 26.04 (Resolute)       ubuntu   26.04                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29              Debian 10 (Buster)       debian      10                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30            Debian 11 (Bullseye)       debian      11                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31            Debian 12 (Bookworm)       debian      12                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32              Debian 13 (Trixie)       debian      13                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33                         Windows      windows     all                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34                           macOS        macos     all              jammy</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35 manylinux glibc 2.28+ (preview)       centos       8                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36                        internal     internal     all                   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    sysReqs binaries hidden official_rspm         arch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4     TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9     TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14    TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15    TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 25    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 26    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 27    TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 28    TRUE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 29    TRUE    FALSE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30    TRUE     TRUE   TRUE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 32    TRUE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 33   FALSE     TRUE  FALSE          TRUE       x86_64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 34   FALSE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 35   FALSE     TRUE  FALSE          TRUE x86_64, ....</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 36    TRUE     TRUE   TRUE          TRUE             </span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -100,7 +100,7 @@ Actions, and administrator helpers used for preflight checks.</p>
 </h2>
 <p>After a failed install in the current R session:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"xml2"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># after a failed source install of the xml2 package:</span></span>
 <span><span class="fu"><a href="../reference/check_error.html">check_error</a></span><span class="op">(</span>platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span><span class="op">)</span></span></code></pre></div>
 <p><code><a href="../reference/check_error.html">check_error()</a></code> reads <code><a href="https://rdrr.io/r/base/stop.html" class="external-link">geterrmessage()</a></code> by
 default. You can also pass text explicitly:</p>

@@ -62,7 +62,25 @@ Other ppm:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 ppm_sysreqs(c("xml2", "curl"), platform = "ubuntu-22.04")
-} # }
+#> System requirement preflight
+#> 
+#> Platform: Ubuntu 22.04
+#> Package manager: apt
+#> Backend: ppm
+#> 
+#> R packages checked:
+#>   curl, xml2
+#> 
+#> System packages to install: 
+#>   libcurl4-openssl-dev  needed by: curl  status: unknown
+#>   libssl-dev  needed by: curl  status: unknown
+#>   libxml2-dev  needed by: xml2  status: unknown
+#> 
+#> Run:
+#>   sudo apt-get update
+#>   sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+#> 
+# }
 ```

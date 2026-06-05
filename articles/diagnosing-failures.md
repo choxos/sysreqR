@@ -26,7 +26,7 @@ After a failed install in the current R session:
 
 ``` r
 
-install.packages("xml2")
+# after a failed source install of the xml2 package:
 check_error(platform = "ubuntu-22.04")
 ```
 

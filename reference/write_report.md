@@ -7,7 +7,7 @@ suggested install command.
 ## Usage
 
 ``` r
-write_report(plan, path = "SYSREQS.md")
+write_report(plan, path)
 ```
 
 ## Arguments
