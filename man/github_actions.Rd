@@ -35,6 +35,7 @@ identical(gha(plan), github_actions(plan))
 Other commands:
 \code{\link[=admin_request]{admin_request()}},
 \code{\link[=dockerfile]{dockerfile()}},
+\code{\link[=gitlab_ci]{gitlab_ci()}},
 \code{\link[=install_command]{install_command()}}
 }
 \concept{commands}

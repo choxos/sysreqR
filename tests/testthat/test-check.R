@@ -97,6 +97,21 @@ test_that("check_packages on Fedora falls through without the apt-only error", {
   expect_false(identical(attr(plan, "backend"), "bundled"))
 })
 
+test_that("bundled database covers the expanded package set", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+
+  bundled_has_packages <- getFromNamespace("bundled_has_packages", "sysreqr")
+  expect_true(bundled_has_packages(
+    c("igraph", "rJava", "jqr", "odbc", "av", "rsvg", "xslt", "protolite")
+  ))
+
+  igraph <- check_packages("igraph", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true(all(c("libglpk-dev", "libxml2-dev") %in% igraph$system_package))
+
+  rjava <- check_packages("rJava", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true("default-jdk" %in% rjava$system_package)
+})
+
 test_that("check_packages errors when given no packages", {
   expect_error(check_packages(character(), platform = "ubuntu-22.04"),
                "at least one package")

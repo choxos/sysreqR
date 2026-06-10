@@ -13,7 +13,7 @@ diagnose_patterns <- data.frame(
     "cannot find -lssl",
     "pkg-config.*not found|pkg-config was not found"
   ),
-  system_package = c(
+  apt = c(
     "libxml2-dev",
     "libcurl4-openssl-dev",
     "libssl-dev",
@@ -27,12 +27,80 @@ diagnose_patterns <- data.frame(
     "libssl-dev",
     "pkg-config"
   ),
+  dnf = c(
+    "libxml2-devel",
+    "libcurl-devel",
+    "openssl-devel",
+    "gdal-devel",
+    "proj-devel",
+    "udunits2-devel",
+    "harfbuzz-devel",
+    "fribidi-devel",
+    "libxml2-devel",
+    "libcurl-devel",
+    "openssl-devel",
+    "pkgconf-pkg-config"
+  ),
+  zypper = c(
+    "libxml2-devel",
+    "libcurl-devel",
+    "libopenssl-devel",
+    "gdal-devel",
+    "proj-devel",
+    "udunits2-devel",
+    "harfbuzz-devel",
+    "fribidi-devel",
+    "libxml2-devel",
+    "libcurl-devel",
+    "libopenssl-devel",
+    "pkg-config"
+  ),
+  apk = c(
+    "libxml2-dev",
+    "curl-dev",
+    "openssl-dev",
+    "gdal-dev",
+    "proj-dev",
+    "udunits-dev",
+    "harfbuzz-dev",
+    "fribidi-dev",
+    "libxml2-dev",
+    "curl-dev",
+    "openssl-dev",
+    "pkgconf"
+  ),
+  brew = c(
+    "libxml2",
+    "curl",
+    "openssl@3",
+    "gdal",
+    "proj",
+    "udunits",
+    "harfbuzz",
+    "fribidi",
+    "libxml2",
+    "curl",
+    "openssl@3",
+    "pkg-config"
+  ),
   confidence = c(
     rep("high", 11),
     "medium"
   ),
   stringsAsFactors = FALSE
 )
+
+diagnose_pattern_column <- function(package_manager) {
+  if (identical(package_manager, "yum")) {
+    return("dnf")
+  }
+  if (is.character(package_manager) && length(package_manager) == 1L &&
+        !is.na(package_manager) &&
+        package_manager %in% c("apt", "dnf", "zypper", "apk", "brew")) {
+    return(package_manager)
+  }
+  "apt"
+}
 
 #' Diagnose an R package installation log
 #'
@@ -198,13 +266,22 @@ diagnose_install_log <- diagnose_log
 
 diagnose_direct_patterns <- function(text, platform, check_installed = TRUE) {
   rows <- list()
+  name_column <- diagnose_pattern_column(platform$package_manager)
   for (i in seq_len(nrow(diagnose_patterns))) {
     pat <- diagnose_patterns$pattern[[i]]
     if (!grepl(pat, text, ignore.case = TRUE, perl = TRUE)) {
       next
     }
-    spkg <- diagnose_patterns$system_package[[i]]
+    spkg <- diagnose_patterns[[name_column]][[i]]
     evidence <- extract_evidence(text, pat)
+    notes <- paste0("Evidence: ", evidence)
+    if (!identical(name_column, "apt")) {
+      notes <- paste0(
+        notes,
+        " Package name mapped for ", name_column,
+        "; verify the exact name on your distribution."
+      )
+    }
     rows[[length(rows) + 1]] <- data.frame(
       r_package = NA_character_,
       sysreq = NA_character_,
@@ -217,7 +294,7 @@ diagnose_direct_patterns <- function(text, platform, check_installed = TRUE) {
       installed = NA,
       source = "manual-log-pattern",
       confidence = diagnose_patterns$confidence[[i]],
-      notes = paste0("Evidence: ", evidence),
+      notes = notes,
       stringsAsFactors = FALSE
     )
   }

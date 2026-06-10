@@ -111,7 +111,7 @@ detect_platform_from_file <- function(os_release) {
   supported <- distro %in% c(
     "ubuntu", "debian", "centos", "redhat", "rhel", "rocky",
     "rockylinux", "almalinux", "fedora", "opensuse", "opensuse-leap",
-    "sles", "sle"
+    "sles", "sle", "alpine"
   )
 
   new_platform(

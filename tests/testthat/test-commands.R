@@ -176,6 +176,86 @@ test_that("dockerfile output stays in the expected shape", {
   expect_match(out, "libxml2-dev", fixed = TRUE)
 })
 
+test_that("diagnose-based plans generate non-apt install commands", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+  log <- "fatal error: libxml/parser.h: No such file or directory"
+
+  fedora <- diagnose_log(text = log, platform = "fedora-40")
+  expect_true("libxml2-devel" %in% fedora$system_package)
+  cmd <- install_command(fedora)
+  expect_true(any(grepl("dnf install -y libxml2-devel", cmd, fixed = TRUE)))
+
+  alpine <- diagnose_log(text = log, platform = "alpine-3.20")
+  expect_true("libxml2-dev" %in% alpine$system_package)
+  cmd <- install_command(alpine)
+  expect_true(any(grepl("apk add --no-cache libxml2-dev", cmd, fixed = TRUE)))
+
+  suse <- diagnose_log(text = log, platform = "opensuse156")
+  expect_true("libxml2-devel" %in% suse$system_package)
+  cmd <- install_command(suse)
+  expect_true(any(grepl(
+    "zypper --non-interactive install libxml2-devel",
+    cmd,
+    fixed = TRUE
+  )))
+
+  centos <- diagnose_log(text = log, platform = "centos7")
+  cmd <- install_command(centos)
+  expect_true(any(grepl("yum install -y libxml2-devel", cmd, fixed = TRUE)))
+})
+
+test_that("dockerfile handles non-apt platforms", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+  plan <- diagnose_log(
+    text = "fatal error: libxml/parser.h: No such file or directory",
+    platform = "alpine-3.20"
+  )
+
+  out <- dockerfile(plan)
+  expect_match(out, "^RUN apk add --no-cache libxml2-dev$")
+})
+
+test_that("gitlab_ci generates a YAML job without sudo", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+  plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")
+  out <- gitlab_ci(plan)
+
+  expect_match(out, "install_system_requirements:", fixed = TRUE)
+  expect_match(out, "  script:", fixed = TRUE)
+  expect_match(out, "    - apt-get update", fixed = TRUE)
+  expect_match(out, "libxml2-dev", fixed = TRUE)
+  expect_false(grepl("sudo", out, fixed = TRUE))
+})
+
+test_that("gitlab_ci handles empty plans and custom job names", {
+  plan <- diagnose_log(text = "unrelated compiler output", platform = "ubuntu-22.04")
+  out <- gitlab_ci(plan, job = "sysreqs")
+
+  expect_match(out, "^sysreqs:")
+  expect_match(out, "No external system requirements detected", fixed = TRUE)
+})
+
+test_that("install_command drops system package names with unsafe characters", {
+  mock <- function(endpoint, query, base_url) {
+    if (identical(endpoint, "status")) {
+      return(mock_ppm_get(endpoint, query, base_url))
+    }
+    list(requirements = list(list(
+      name = "demo",
+      requirements = list(packages = list("libdemo-dev", "evil; rm -rf /tmp/x"))
+    )))
+  }
+  withr::local_options(
+    sysreqr.ppm_get = mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  plan <- ppm_sysreqs("demo", platform = "ubuntu-22.04")
+  expect_warning(cmd <- install_command(plan), "unexpected characters")
+  expect_true(any(grepl("libdemo-dev", cmd, fixed = TRUE)))
+  expect_false(any(grepl("rm -rf", cmd, fixed = TRUE)))
+})
+
 test_that("github_actions output stays in the expected shape", {
   withr::local_options(sysreqr.installed_system_packages = character())
   plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")

@@ -1,6 +1,6 @@
 Package: sysreqr
 Title: Preflight Checks for 'R' Package System Requirements
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person(
       "Ahmad", "Sofi-Mahmudi",

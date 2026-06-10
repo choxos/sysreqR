@@ -29,6 +29,7 @@ cat(admin_request(plan))
 Other commands:
 \code{\link[=dockerfile]{dockerfile()}},
 \code{\link[=github_actions]{github_actions()}},
+\code{\link[=gitlab_ci]{gitlab_ci()}},
 \code{\link[=install_command]{install_command()}}
 }
 \concept{commands}

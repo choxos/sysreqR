@@ -15,6 +15,30 @@ test_that("diagnose_log handles pkg-config failures", {
   expect_equal(plan$confidence, "medium")
 })
 
+test_that("diagnose_log maps system package names per package manager", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+  log <- "fatal error: libxml/parser.h: No such file or directory"
+
+  fedora <- diagnose_log(text = log, platform = "fedora-40")
+  expect_equal(fedora$system_package, "libxml2-devel")
+  expect_match(fedora$notes, "mapped for dnf", fixed = TRUE)
+
+  pkgconf <- diagnose_log(
+    text = "pkg-config was not found",
+    platform = "fedora-40"
+  )
+  expect_equal(pkgconf$system_package, "pkgconf-pkg-config")
+
+  # yum platforms reuse the dnf (EL) names.
+  centos <- diagnose_log(text = log, platform = "centos7")
+  expect_equal(centos$system_package, "libxml2-devel")
+
+  # apt output is unchanged and carries no mapping caveat.
+  ubuntu <- diagnose_log(text = log, platform = "ubuntu-22.04")
+  expect_equal(ubuntu$system_package, "libxml2-dev")
+  expect_false(any(grepl("mapped for", ubuntu$notes, fixed = TRUE)))
+})
+
 test_that("failed package extraction reads common install failures", {
   text <- paste(
     "ERROR: configuration failed for package 'xml2'",

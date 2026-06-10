@@ -65,3 +65,35 @@ test_that("JSON parser still accepts escaped control characters", {
   value <- json_read_text('{"x":"a\\nb\\tc"}')
   expect_equal(value$x, "a\nb\tc")
 })
+
+test_that("JSON parser decodes surrogate pairs", {
+  value <- json_read_text('{"emoji":"\\ud83d\\ude00"}')
+  expect_equal(value$emoji, "\U0001F600")
+})
+
+test_that("JSON parser rejects invalid unicode escapes", {
+  expect_error(json_read_text('{"x":"\\u00"}'), "unicode escape")
+  expect_error(json_read_text('{"x":"\\uzz11"}'), "unicode escape")
+  expect_error(json_read_text('{"x":"\\ud83d"}'), "surrogate")
+  expect_error(json_read_text('{"x":"\\ude00"}'), "surrogate")
+  expect_error(json_read_text('{"x":"\\ud83d\\u0041"}'), "surrogate")
+})
+
+test_that("JSON writer escapes control characters for a clean round-trip", {
+  json_serialize <- getFromNamespace("json_serialize", "sysreqr")
+
+  # Regression: \n, \r, and \t were double-escaped ("\\n"), so a serialized
+  # newline parsed back as a literal backslash + n.
+  whitespace <- json_serialize(list(x = "a\nb\tc\rd"))
+  expect_equal(json_read_text(whitespace)$x, "a\nb\tc\rd")
+
+  backslash <- json_serialize(list(x = "C:\\Users\\test"))
+  expect_equal(json_read_text(backslash)$x, "C:\\Users\\test")
+
+  backspace <- json_serialize(list(x = "a\bb\fc"))
+  expect_equal(json_read_text(backspace)$x, "a\bb\fc")
+
+  escape_char <- json_serialize(list(x = "a\033b"))
+  expect_match(escape_char, "\\u001b", fixed = TRUE)
+  expect_equal(json_read_text(escape_char)$x, "a\033b")
+})

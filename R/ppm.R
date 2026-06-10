@@ -232,7 +232,7 @@ normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
     pre_all <- c(pre_all, pre)
     post_all <- c(post_all, post)
 
-    if (!length(system_packages) && length(pre)) {
+    if (!length(system_packages) && (length(pre) || length(post))) {
       rows[[length(rows) + 1]] <- data.frame(
         r_package = r_package,
         sysreq = NA_character_,
@@ -290,16 +290,19 @@ normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
 #' Emits or installs the R code lines that point `options(repos)` at a Posit
 #' Package Manager binary repository. With `dry_run = TRUE` (the default),
 #' the lines are returned without touching any file, so the user can review
-#' them before applying. When `dry_run = FALSE`, `path` must be supplied
-#' explicitly.
+#' them before applying. When `dry_run = FALSE`, `path` must always be
+#' supplied explicitly; no file is ever chosen automatically.
 #'
-#' @param scope `"user"` edits the user `.Rprofile`, `"project"` edits the
-#'   current project `.Rprofile`.
+#' @param scope Intended `.Rprofile` location, `"user"` or `"project"`. The
+#'   function never picks a file itself; `scope` only shapes the path
+#'   suggestion shown when `dry_run = FALSE` is called without `path`
+#'   (the user `.Rprofile` for `"user"`, the project `.Rprofile` for
+#'   `"project"`).
 #' @param platform Platform specification accepted by [resolve_platform()].
 #' @param repo Repository name.
 #' @param dry_run If `TRUE`, return the lines that would be written without
 #'   editing files.
-#' @param path Explicit `.Rprofile` path used when `dry_run = FALSE`.
+#' @param path Explicit `.Rprofile` path. Required when `dry_run = FALSE`.
 #'
 #' @return The configuration lines, invisibly when written.
 #' @family ppm
@@ -331,7 +334,16 @@ use_ppm <- function(scope = c("user", "project"), platform = NULL, repo = "cran"
   }
 
   if (is.null(path)) {
-    stop("`path` must be supplied when `dry_run = FALSE`.", call. = FALSE)
+    suggestion <- if (identical(scope, "user")) {
+      file.path(Sys.getenv("HOME", "~"), ".Rprofile")
+    } else {
+      file.path(".", ".Rprofile")
+    }
+    stop(
+      "`path` must be supplied when `dry_run = FALSE`. ",
+      "For the ", scope, " scope, a typical choice is `", suggestion, "`.",
+      call. = FALSE
+    )
   }
 
   old <- read_lines_if_exists(path)

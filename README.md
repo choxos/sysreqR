@@ -16,8 +16,8 @@ system state itself; the user stays in control.
 It can:
 
 * check system requirements for R packages, projects, and installed libraries;
-* generate install commands, shell scripts, Dockerfile snippets, and GitHub
-  Actions snippets;
+* generate install commands, shell scripts, Dockerfile snippets, GitHub
+  Actions snippets, and GitLab CI snippets;
 * diagnose common failed-install logs;
 * suggest beginner-friendly setup steps for Linux R installations;
 * prepare a concise administrator request when the user cannot run `sudo`.
@@ -96,6 +96,7 @@ Or into a deployment snippet:
 ```r
 dockerfile(plan)
 github_actions(plan)
+gitlab_ci(plan)
 ```
 
 Or into an administrator request:
@@ -150,7 +151,7 @@ diagnose_failed_packages(
 
 Diagnosis returns a regular `sysreqr_plan`, so the result feeds straight into
 `install_command()`, `write_install_script()`, `admin_request()`,
-`dockerfile()`, or `github_actions()`.
+`dockerfile()`, `github_actions()`, or `gitlab_ci()`.
 
 ## Projects and libraries
 

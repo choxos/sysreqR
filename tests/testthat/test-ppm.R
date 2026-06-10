@@ -113,3 +113,39 @@ test_that("use_ppm requires an explicit path when dry_run is FALSE", {
     fixed = TRUE
   )
 })
+
+test_that("use_ppm path error suggests a scope-appropriate file", {
+  expect_error(
+    use_ppm("project", platform = "ubuntu-22.04", dry_run = FALSE),
+    "project scope"
+  )
+  expect_error(
+    use_ppm("user", platform = "ubuntu-22.04", dry_run = FALSE),
+    "user scope"
+  )
+})
+
+test_that("ppm_sysreqs keeps requirements with only post-install commands", {
+  mock <- function(endpoint, query, base_url) {
+    if (identical(endpoint, "status")) {
+      return(mock_ppm_get(endpoint, query, base_url))
+    }
+    list(requirements = list(list(
+      name = "demo",
+      requirements = list(
+        post_install = list(list(command = "R CMD javareconf"))
+      )
+    )))
+  }
+  withr::local_options(
+    sysreqr.ppm_get = mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  plan <- ppm_sysreqs("demo", platform = "ubuntu-22.04")
+
+  expect_equal(nrow(plan), 1L)
+  expect_equal(plan$r_package, "demo")
+  expect_match(plan$post_install, "javareconf", fixed = TRUE)
+  expect_true("R CMD javareconf" %in% attr(plan, "post_install"))
+})

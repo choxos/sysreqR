@@ -44,6 +44,7 @@ install_command(plan, sudo = FALSE, update = FALSE)
 Other commands:
 \code{\link[=admin_request]{admin_request()}},
 \code{\link[=dockerfile]{dockerfile()}},
-\code{\link[=github_actions]{github_actions()}}
+\code{\link[=github_actions]{github_actions()}},
+\code{\link[=gitlab_ci]{gitlab_ci()}}
 }
 \concept{commands}

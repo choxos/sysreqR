@@ -168,9 +168,19 @@ requirements for you, use the `extra-packages` and `needs` inputs of
 2. **CI for non-R-package projects** (Shiny apps, scripts, reports), where
    the standard r-lib actions are less of a fit.
 
-## Beyond GitHub Actions
+## GitLab CI
 
-The `install_command()` output is portable across CI systems. For GitLab CI:
+`gitlab_ci()` generates a YAML job for GitLab pipelines. GitLab CI jobs
+usually run as root inside the container image, so the commands are emitted
+without `sudo`.
+
+```{r}
+plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")
+cat(gitlab_ci(plan))
+```
+
+In practice you fold those commands into the `before_script` of an existing
+job:
 
 ```yaml
 test:
@@ -182,7 +192,10 @@ test:
     - Rscript -e 'devtools::check()'
 ```
 
-For Jenkins, Drone, or shell-driven CI, write the install script once:
+## Beyond GitHub Actions and GitLab
+
+The `install_command()` output is portable across CI systems. For Jenkins,
+Drone, or shell-driven CI, write the install script once:
 
 ```{r, eval = FALSE}
 write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
@@ -194,8 +207,9 @@ Then call `sh ci/install-sysreqs.sh` from any CI runner.
 
 Both Posit Workbench and Posit Connect benefit from Posit Package Manager
 binary R packages, which avoid source compilation entirely for the
-distributions they support. `use_ppm("user")` writes the `.Rprofile`
-fragment that points R at the right binary repository.
+distributions they support. `use_ppm("user")` prints the `.Rprofile`
+fragment that points R at the right binary repository; pass
+`dry_run = FALSE` and an explicit `path` to write it.
 
 For Connect specifically, server administrators usually configure the
 repository at the server level, so end users only need the application

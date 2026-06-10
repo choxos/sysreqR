@@ -151,13 +151,34 @@ json_parse_string <- function(state) {
 }
 
 json_parse_unicode_escape <- function(state) {
+  int <- json_parse_hex4(state)
+
+  # High surrogate: must be followed by an escaped low surrogate; combine
+  # the pair into a single supplementary code point (e.g. emoji).
+  if (int >= 0xD800L && int <= 0xDBFFL) {
+    if (!identical(substr(state$text, state$pos, state$pos + 1L), "\\u")) {
+      stop("Invalid JSON unicode escape: unpaired surrogate.", call. = FALSE)
+    }
+    state$pos <- state$pos + 2L
+    low <- json_parse_hex4(state)
+    if (low < 0xDC00L || low > 0xDFFFL) {
+      stop("Invalid JSON unicode escape: unpaired surrogate.", call. = FALSE)
+    }
+    int <- 0x10000L + (int - 0xD800L) * 0x400L + (low - 0xDC00L)
+  } else if (int >= 0xDC00L && int <= 0xDFFFL) {
+    stop("Invalid JSON unicode escape: unpaired surrogate.", call. = FALSE)
+  }
+
+  intToUtf8(int)
+}
+
+json_parse_hex4 <- function(state) {
   hex <- substr(state$text, state$pos, state$pos + 3L)
-  state$pos <- state$pos + 4L
-  int <- strtoi(hex, base = 16L)
-  if (is.na(int)) {
+  if (!grepl("^[0-9a-fA-F]{4}$", hex)) {
     stop("Invalid JSON unicode escape.", call. = FALSE)
   }
-  intToUtf8(int)
+  state$pos <- state$pos + 4L
+  strtoi(hex, base = 16L)
 }
 
 json_parse_number <- function(state) {
@@ -265,10 +286,26 @@ json_serialize_object <- function(x, pretty, indent) {
 }
 
 json_quote <- function(x) {
-  x <- gsub("\\\\", "\\\\\\\\", x)
+  # All replacements run with fixed = TRUE, where gsub() uses the
+  # replacement text literally: "\\n" is the two characters backslash + n.
+  x <- gsub("\\", "\\\\", x, fixed = TRUE)
   x <- gsub('"', '\\"', x, fixed = TRUE)
-  x <- gsub("\n", "\\\\n", x, fixed = TRUE)
-  x <- gsub("\r", "\\\\r", x, fixed = TRUE)
-  x <- gsub("\t", "\\\\t", x, fixed = TRUE)
+  x <- gsub("\n", "\\n", x, fixed = TRUE)
+  x <- gsub("\r", "\\r", x, fixed = TRUE)
+  x <- gsub("\t", "\\t", x, fixed = TRUE)
+  x <- gsub("\b", "\\b", x, fixed = TRUE)
+  x <- gsub("\f", "\\f", x, fixed = TRUE)
+  x <- vapply(x, json_escape_control, character(1), USE.NAMES = FALSE)
   paste0('"', x, '"')
+}
+
+json_escape_control <- function(x) {
+  if (is.na(x) || !grepl("[\x01-\x1F]", x)) {
+    return(x)
+  }
+  chars <- strsplit(x, "", fixed = TRUE)[[1]]
+  codes <- vapply(chars, utf8ToInt, integer(1), USE.NAMES = FALSE)
+  control <- !is.na(codes) & codes <= 31L
+  chars[control] <- sprintf("\\u%04x", codes[control])
+  paste(chars, collapse = "")
 }

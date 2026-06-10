@@ -12,3 +12,15 @@ test_that("explain handles empty plans gracefully", {
   out <- capture.output(explain(plan))
   expect_match(paste(out, collapse = "\n"), "No external system requirements", fixed = TRUE)
 })
+
+test_that("explain handles diagnose plans without R package names", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+  plan <- diagnose_log(
+    text = "fatal error: libxml/parser.h: No such file or directory",
+    platform = "ubuntu-22.04"
+  )
+
+  out <- paste(capture.output(explain(plan)), collapse = "\n")
+  expect_match(out, "libxml2-dev is needed", fixed = TRUE)
+  expect_false(grepl("NA needs", out, fixed = TRUE))
+})

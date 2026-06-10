@@ -13,8 +13,11 @@ use_ppm(
 )
 }
 \arguments{
-\item{scope}{\code{"user"} edits the user \code{.Rprofile}, \code{"project"} edits the
-current project \code{.Rprofile}.}
+\item{scope}{Intended \code{.Rprofile} location, \code{"user"} or \code{"project"}. The
+function never picks a file itself; \code{scope} only shapes the path
+suggestion shown when \code{dry_run = FALSE} is called without \code{path}
+(the user \code{.Rprofile} for \code{"user"}, the project \code{.Rprofile} for
+\code{"project"}).}
 
 \item{platform}{Platform specification accepted by \code{\link[=resolve_platform]{resolve_platform()}}.}
 
@@ -23,7 +26,7 @@ current project \code{.Rprofile}.}
 \item{dry_run}{If \code{TRUE}, return the lines that would be written without
 editing files.}
 
-\item{path}{Explicit \code{.Rprofile} path used when \code{dry_run = FALSE}.}
+\item{path}{Explicit \code{.Rprofile} path. Required when \code{dry_run = FALSE}.}
 }
 \value{
 The configuration lines, invisibly when written.
@@ -32,8 +35,8 @@ The configuration lines, invisibly when written.
 Emits or installs the R code lines that point \code{options(repos)} at a Posit
 Package Manager binary repository. With \code{dry_run = TRUE} (the default),
 the lines are returned without touching any file, so the user can review
-them before applying. When \code{dry_run = FALSE}, \code{path} must be supplied
-explicitly.
+them before applying. When \code{dry_run = FALSE}, \code{path} must always be
+supplied explicitly; no file is ever chosen automatically.
 }
 \examples{
 use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)

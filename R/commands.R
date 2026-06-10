@@ -59,6 +59,7 @@ update_command <- function(platform) {
 
 install_command_for_packages <- function(pkgs, platform) {
   pkgs <- compact_chr(pkgs)
+  pkgs <- sanitize_system_package_names(pkgs)
   if (!length(pkgs)) {
     return(character())
   }
@@ -79,6 +80,22 @@ install_command_for_packages <- function(pkgs, platform) {
   } else {
     character()
   }
+}
+
+# System package names come from external metadata (Package Manager, pak).
+# Only names made of the characters used by real apt/dnf/zypper/apk/brew
+# packages are allowed into generated shell lines; anything else is dropped
+# with a warning rather than pasted into a command.
+sanitize_system_package_names <- function(pkgs) {
+  ok <- grepl("^[A-Za-z0-9][A-Za-z0-9._+:@-]*$", pkgs)
+  if (any(!ok)) {
+    warning(
+      "Dropping system package names with unexpected characters: ",
+      paste(pkgs[!ok], collapse = ", "),
+      call. = FALSE
+    )
+  }
+  pkgs[ok]
 }
 
 add_sudo <- function(commands) {
@@ -131,6 +148,7 @@ dockerfile <- function(x, platform = NULL, missing_only = TRUE, ...) {
   plan <- ensure_plan(x, platform = platform, ...)
   platform <- attr(plan, "platform_info") %||% resolve_platform(platform)
   pkgs <- plan_system_packages(plan, missing_only = missing_only)
+  pkgs <- sanitize_system_package_names(pkgs)
 
   if (!length(pkgs)) {
     return("# No external system requirements detected")
@@ -193,6 +211,44 @@ github_actions <- function(x, platform = NULL, missing_only = TRUE, ...) {
 #' @rdname github_actions
 #' @export
 gha <- github_actions
+
+#' Generate a GitLab CI snippet
+#'
+#' Produces a GitLab CI YAML job that installs the system packages a plan
+#' needs. GitLab CI jobs usually run as root inside a container image, so
+#' the commands are emitted without `sudo`.
+#'
+#' @param x A `sysreqr_plan` or package vector.
+#' @param platform Platform specification accepted by [resolve_platform()].
+#' @param job Name of the generated CI job.
+#' @param missing_only Whether to include only packages not known to be
+#'   installed.
+#' @param ... Passed to [check_packages()] when `x` is not a plan.
+#'
+#' @return A YAML snippet.
+#' @family commands
+#' @export
+#' @examples
+#' plan <- check_packages("xml2", platform = "ubuntu-22.04", backend = "bundled")
+#' cat(gitlab_ci(plan))
+gitlab_ci <- function(x, platform = NULL, job = "install_system_requirements",
+                      missing_only = TRUE, ...) {
+  plan <- ensure_plan(x, platform = platform, ...)
+  commands <- install_command(plan, sudo = FALSE, update = TRUE, missing_only = missing_only)
+
+  if (!length(commands)) {
+    commands <- "echo \"No external system requirements detected\""
+  }
+
+  paste(
+    c(
+      paste0(job, ":"),
+      "  script:",
+      paste0("    - ", commands)
+    ),
+    collapse = "\n"
+  )
+}
 
 #' Create an administrator request
 #'

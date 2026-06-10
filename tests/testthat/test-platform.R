@@ -82,6 +82,9 @@ test_that("detect_platform reads Alpine fixtures", {
 
   expect_equal(platform$distro, "alpine")
   expect_equal(platform$package_manager, "apk")
+  # Regression: alpine was missing from the supported distro list even though
+  # the README advertises Alpine and string specs already reported support.
+  expect_true(platform$supported)
 })
 
 test_that("detect_platform reads Rocky Linux fixtures", {

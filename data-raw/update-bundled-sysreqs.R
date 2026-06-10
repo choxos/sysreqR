@@ -25,7 +25,8 @@ bundled_packages <- c(
   "sf", "terra", "units", "git2r", "gert", "magick", "pdftools",
   "tesseract", "RPostgres", "RMariaDB", "RMySQL", "RODBC", "V8",
   "sodium", "stringi", "webp", "png", "jpeg", "tiff", "gsl", "RcppGSL",
-  "gmp", "Rmpfr", "fftwtools", "hdf5r", "ncdf4"
+  "gmp", "Rmpfr", "fftwtools", "hdf5r", "ncdf4",
+  "igraph", "rJava", "jqr", "odbc", "av", "rsvg", "xslt", "protolite"
 )
 
 quote_chr <- function(x) {
@@ -126,11 +127,15 @@ replace_between_markers <- function(path, replacement) {
   invisible(path)
 }
 
+arg_or <- function(args, i, default) {
+  if (length(args) >= i && nzchar(args[[i]])) args[[i]] else default
+}
+
 args <- commandArgs(trailingOnly = TRUE)
-distribution <- args[[1L]] %||% "ubuntu"
-release <- args[[2L]] %||% "22.04"
-repo <- args[[3L]] %||% "cran"
-base_url <- args[[4L]] %||% "https://packagemanager.posit.co"
+distribution <- arg_or(args, 1L, "ubuntu")
+release <- arg_or(args, 2L, "22.04")
+repo <- arg_or(args, 3L, "cran")
+base_url <- arg_or(args, 4L, "https://packagemanager.posit.co")
 
 response <- download_ppm_sysreqs(
   base_url = base_url,

@@ -38,9 +38,14 @@ explain <- function(x, platform = NULL, ...) {
     } else {
       ""
     }
+    headline <- if (is.na(rpkg) || !nzchar(rpkg)) {
+      paste0(spkg, " is needed", need, ".")
+    } else {
+      paste0(rpkg, " needs ", spkg, need, ".")
+    }
     lines <- c(
       lines,
-      paste0(rpkg, " needs ", spkg, need, "."),
+      headline,
       paste0("Install it with: ", install_script_for_package(spkg, attr(plan, "platform_info"))),
       ""
     )

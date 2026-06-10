@@ -33,7 +33,15 @@ bundled_sysreqs_db <- data.frame(
     "Rmpfr", "Rmpfr",
     "fftwtools",
     "hdf5r",
-    "ncdf4"
+    "ncdf4",
+    "igraph", "igraph",
+    "rJava",
+    "jqr",
+    "odbc",
+    "av",
+    "rsvg",
+    "xslt",
+    "protolite", "protolite", "protolite"
   ),
   system_package = c(
     "libcurl4-openssl-dev", "libssl-dev",
@@ -67,7 +75,15 @@ bundled_sysreqs_db <- data.frame(
     "libgmp3-dev", "libmpfr-dev",
     "libfftw3-dev",
     "libhdf5-dev",
-    "libnetcdf-dev"
+    "libnetcdf-dev",
+    "libglpk-dev", "libxml2-dev",
+    "default-jdk",
+    "libjq-dev",
+    "unixodbc-dev",
+    "libavfilter-dev",
+    "librsvg2-dev",
+    "libxslt1-dev",
+    "libprotobuf-dev", "protobuf-compiler", "libprotoc-dev"
   ),
   stringsAsFactors = FALSE
 )
