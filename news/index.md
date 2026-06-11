@@ -4,6 +4,20 @@
 
 ### New features
 
+- The bundled fallback database is now cross-distro: it stores system
+  package names for `apt`, `dnf` (also used by `yum` platforms),
+  `zypper`, and `apk`, so `backend = "bundled"` and offline fallbacks
+  work on Fedora, RHEL and its rebuilds, openSUSE, and Alpine, not only
+  on Debian and Ubuntu. The `apt`, `dnf`, and `zypper` names are
+  generated from the Posit Package Manager database; the Alpine names
+  are hand curated. The `"auto"` backend now prefers bundled data on all
+  of these platforms.
+- Log diagnosis recognizes many more missing libraries. The direct error
+  patterns grew from 12 to 33 and now cover, among others, zlib, bzip2,
+  xz, png, jpeg, tiff, freetype, fontconfig, cairo, SQLite, PostgreSQL,
+  MariaDB, libsodium, GMP, MPFR, GLPK, GEOS, ImageMagick, poppler,
+  leptonica, tesseract, ICU, webp, and Cyrus SASL, each with names for
+  all supported package managers.
 - New
   [`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md)
   generates a GitLab CI YAML job that installs the system packages a
@@ -12,6 +26,13 @@
 - The bundled fallback database now also covers `igraph`, `rJava`,
   `jqr`, `odbc`, `av`, `rsvg`, `xslt`, and `protolite` (40 curated
   packages in total).
+- Installed-state detection now works on Alpine: `missing_only`
+  filtering and the `installed` plan column use `apk info` when running
+  on an `apk` platform.
+- The startup message suggests
+  [`setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
+  with the detected platform instead of a hardcoded `ubuntu-24.04`
+  example when the current host is a supported Linux distribution.
 
 ### Documentation
 
@@ -54,6 +75,12 @@
 - Posit Package Manager requirements that consist only of post-install
   commands (for example `R CMD javareconf`) now keep their row in the
   plan.
+- When a Posit Package Manager query fails (for example with no
+  network), the fallback no longer stops with “Bundled fallback data
+  currently supports apt platforms only.” on non-apt platforms. The
+  bundled fallback now serves platform-matching names, and on platforms
+  outside the bundled data (such as Homebrew) an empty plan is returned
+  with the original error recorded in the `fallback_error` attribute.
 - [`detect_platform()`](https://choxos.github.io/sysreqR/reference/detect_platform.md)
   now reports Alpine hosts as supported, matching
   `resolve_platform("alpine-3.20")` and the documented platform list.

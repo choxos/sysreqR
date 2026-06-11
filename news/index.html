@@ -46,8 +46,12 @@
 <h2 class="pkg-version" data-toc-text="0.2.0" id="sysreqr-020">sysreqr 0.2.0<a class="anchor" aria-label="anchor" href="#sysreqr-020"></a></h2>
 <div class="section level3">
 <h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
-<ul><li>New <code><a href="../reference/gitlab_ci.html">gitlab_ci()</a></code> generates a GitLab CI YAML job that installs the system packages a plan needs. GitLab CI jobs usually run as root inside a container image, so the commands are emitted without <code>sudo</code>.</li>
+<ul><li>The bundled fallback database is now cross-distro: it stores system package names for <code>apt</code>, <code>dnf</code> (also used by <code>yum</code> platforms), <code>zypper</code>, and <code>apk</code>, so <code>backend = "bundled"</code> and offline fallbacks work on Fedora, RHEL and its rebuilds, openSUSE, and Alpine, not only on Debian and Ubuntu. The <code>apt</code>, <code>dnf</code>, and <code>zypper</code> names are generated from the Posit Package Manager database; the Alpine names are hand curated. The <code>"auto"</code> backend now prefers bundled data on all of these platforms.</li>
+<li>Log diagnosis recognizes many more missing libraries. The direct error patterns grew from 12 to 33 and now cover, among others, zlib, bzip2, xz, png, jpeg, tiff, freetype, fontconfig, cairo, SQLite, PostgreSQL, MariaDB, libsodium, GMP, MPFR, GLPK, GEOS, ImageMagick, poppler, leptonica, tesseract, ICU, webp, and Cyrus SASL, each with names for all supported package managers.</li>
+<li>New <code><a href="../reference/gitlab_ci.html">gitlab_ci()</a></code> generates a GitLab CI YAML job that installs the system packages a plan needs. GitLab CI jobs usually run as root inside a container image, so the commands are emitted without <code>sudo</code>.</li>
 <li>The bundled fallback database now also covers <code>igraph</code>, <code>rJava</code>, <code>jqr</code>, <code>odbc</code>, <code>av</code>, <code>rsvg</code>, <code>xslt</code>, and <code>protolite</code> (40 curated packages in total).</li>
+<li>Installed-state detection now works on Alpine: <code>missing_only</code> filtering and the <code>installed</code> plan column use <code>apk info</code> when running on an <code>apk</code> platform.</li>
+<li>The startup message suggests <code><a href="../reference/setup_advice.html">setup_advice()</a></code> with the detected platform instead of a hardcoded <code>ubuntu-24.04</code> example when the current host is a supported Linux distribution.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
@@ -63,6 +67,7 @@
 <li>The internal JSON parser now validates <code>\u</code> escape sequences (rejecting truncated escapes) and decodes UTF-16 surrogate pairs, so characters outside the Basic Multilingual Plane survive parsing. Unpaired surrogates are rejected.</li>
 <li>Generated shell commands, Dockerfile snippets, and CI snippets drop system package names that contain unexpected characters (with a warning) instead of pasting them into the command line.</li>
 <li>Posit Package Manager requirements that consist only of post-install commands (for example <code>R CMD javareconf</code>) now keep their row in the plan.</li>
+<li>When a Posit Package Manager query fails (for example with no network), the fallback no longer stops with “Bundled fallback data currently supports apt platforms only.” on non-apt platforms. The bundled fallback now serves platform-matching names, and on platforms outside the bundled data (such as Homebrew) an empty plan is returned with the original error recorded in the <code>fallback_error</code> attribute.</li>
 <li>
 <code><a href="../reference/detect_platform.html">detect_platform()</a></code> now reports Alpine hosts as supported, matching <code>resolve_platform("alpine-3.20")</code> and the documented platform list.</li>
 <li>

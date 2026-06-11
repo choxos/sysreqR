@@ -241,9 +241,11 @@ explain(plan)
 accepts four backend modes.
 
 - `backend = "auto"` uses bundled data for simple, known CRAN packages
-  on `apt` platforms, then Package Manager, then `pak` when possible.
+  on `apt`, `dnf`/`yum`, `zypper`, and `apk` platforms, then Package
+  Manager, then `pak` when possible.
 - `backend = "bundled"` uses only the static database shipped with the
-  installed `sysreqr` release. Currently optimized for `apt`.
+  installed `sysreqr` release. It carries package names for `apt`,
+  `dnf`/`yum`, `zypper`, and `apk`.
 - `backend = "ppm"` uses the Posit Package Manager API when network
   access is available.
 - `backend = "pak"` uses

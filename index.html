@@ -226,9 +226,9 @@
 <li>
 <strong>CentOS</strong> 7 (legacy)</li>
 <li>
-<strong>openSUSE Leap</strong> / <strong>SUSE Linux Enterprise</strong>: 15.6</li>
+<strong>openSUSE Leap</strong> / <strong>SUSE Linux Enterprise</strong>: 15.6 (Leap 16.0 is detected and gets <code>zypper</code> commands, but Posit Package Manager does not publish binaries for it yet)</li>
 <li>
-<strong>Alpine</strong>: 3.20</li>
+<strong>Alpine</strong>: 3.20 and newer</li>
 </ul>
 <p>macOS and Windows are detected, but most package installation problems on those platforms are handled by CRAN binaries rather than system package checks.</p>
 </div>
@@ -266,8 +266,7 @@
 <tr>
 <td><code>sysreqr</code></td>
 <td>Zero runtime deps; log diagnosis; beginner UX</td>
-<td>Bundled DB is small; biased toward <code>apt</code>
-</td>
+<td>Bundled DB covers ~40 curated packages</td>
 </tr>
 </tbody>
 </table>

@@ -313,12 +313,14 @@ installed status when available, source, confidence, and notes.</p>
 <ul>
 <li>
 <code>backend = "auto"</code> uses bundled data for simple, known
-CRAN packages on <code>apt</code> platforms, then Package Manager, then
-<code>pak</code> when possible.</li>
+CRAN packages on <code>apt</code>, <code>dnf</code>/<code>yum</code>,
+<code>zypper</code>, and <code>apk</code> platforms, then Package
+Manager, then <code>pak</code> when possible.</li>
 <li>
 <code>backend = "bundled"</code> uses only the static database
-shipped with the installed <code>sysreqr</code> release. Currently
-optimized for <code>apt</code>.</li>
+shipped with the installed <code>sysreqr</code> release. It carries
+package names for <code>apt</code>, <code>dnf</code>/<code>yum</code>,
+<code>zypper</code>, and <code>apk</code>.</li>
 <li>
 <code>backend = "ppm"</code> uses the Posit Package Manager API when
 network access is available.</li>
