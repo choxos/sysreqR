@@ -34,7 +34,8 @@ A \code{sysreqr_plan}.
 Queries the Posit Package Manager \verb{/sysreqs} endpoint for the given
 packages and platform, and normalizes the response into a
 \code{sysreqr_plan}. If the API call fails, the function falls back to the
-bundled database and records the failure in the
+bundled database (or to an empty plan when the bundled data has no names
+for the platform's package manager) and records the failure in the
 \code{"fallback_error"} attribute of the returned plan.
 }
 \examples{

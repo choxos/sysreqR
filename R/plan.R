@@ -272,6 +272,8 @@ list_installed_system_packages <- function(platform = NULL) {
         c("-qa", "--qf", shQuote("%{NAME}\n")),
         stdout = TRUE, stderr = FALSE
       )
+    } else if (identical(pm, "apk") && nzchar(Sys.which("apk"))) {
+      system2("apk", "info", stdout = TRUE, stderr = FALSE)
     } else if (identical(pm, "brew") && nzchar(Sys.which("brew"))) {
       system2("brew", "list", stdout = TRUE, stderr = FALSE)
     } else {

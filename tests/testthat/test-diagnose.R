@@ -176,3 +176,60 @@ test_that("diagnose_failed_packages handles an empty package vector", {
   expect_s3_class(plan, "sysreqr_plan")
   expect_equal(nrow(plan), 0L)
 })
+
+test_that("expanded log patterns map common libraries per package manager", {
+  cases <- list(
+    list("fatal error: png.h: No such file or directory", "ubuntu-22.04", "libpng-dev"),
+    list("fatal error: png.h: No such file or directory", "fedora-40", "libpng-devel"),
+    list("/usr/bin/ld: cannot find -lpq", "ubuntu-22.04", "libpq-dev"),
+    list("/usr/bin/ld: cannot find -lpq", "fedora-40", "libpq-devel"),
+    list("fatal error: sqlite3.h: No such file or directory", "opensuse156", "sqlite3-devel"),
+    list("fatal error: Magick++.h: No such file or directory", "ubuntu-22.04", "libmagick++-dev"),
+    list("fatal error: ft2build.h: No such file or directory", "alpine-3.20", "freetype-dev"),
+    list("fatal error: unicode/ucnv.h: No such file or directory", "fedora-40", "libicu-devel"),
+    list("/usr/bin/ld: cannot find -lz", "ubuntu-22.04", "zlib1g-dev"),
+    list("fatal error: cairo.h: No such file or directory", "ubuntu-22.04", "libcairo2-dev"),
+    list(
+      "fatal error: mysql.h: No such file or directory",
+      "ubuntu-22.04", "default-libmysqlclient-dev"
+    ),
+    list(
+      "fatal error: tesseract/baseapi.h: No such file or directory",
+      "fedora-40", "tesseract-devel"
+    )
+  )
+  for (case in cases) {
+    plan <- diagnose_log(text = case[[1]], platform = case[[2]], check_installed = FALSE)
+    expect_true(
+      case[[3]] %in% plan$system_package,
+      label = paste0(case[[2]], " / ", case[[1]], " -> ", case[[3]])
+    )
+  }
+})
+
+test_that("linker patterns do not over-match similar library names", {
+  # -lzstd must not trigger the zlib rule, -lgmpxx must not trigger gmp.
+  zstd <- diagnose_log(
+    text = "/usr/bin/ld: cannot find -lzstd",
+    platform = "ubuntu-22.04",
+    check_installed = FALSE
+  )
+  expect_false("zlib1g-dev" %in% zstd$system_package)
+
+  gmpxx <- diagnose_log(
+    text = "/usr/bin/ld: cannot find -lgmpxx",
+    platform = "ubuntu-22.04",
+    check_installed = FALSE
+  )
+  expect_false("libgmp3-dev" %in% gmpxx$system_package)
+})
+
+test_that("a header and linker hit for the same library produce one suggestion", {
+  text <- paste(
+    "fatal error: png.h: No such file or directory",
+    "/usr/bin/ld: cannot find -lpng",
+    sep = "\n"
+  )
+  plan <- diagnose_log(text = text, platform = "ubuntu-22.04", check_installed = FALSE)
+  expect_equal(sum(plan$system_package == "libpng-dev"), 1L)
+})

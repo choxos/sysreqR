@@ -130,7 +130,8 @@ ppm_repo <- function(platform = NULL, repo = "cran", snapshot = "latest",
 #' Queries the Posit Package Manager `/sysreqs` endpoint for the given
 #' packages and platform, and normalizes the response into a
 #' `sysreqr_plan`. If the API call fails, the function falls back to the
-#' bundled database and records the failure in the
+#' bundled database (or to an empty plan when the bundled data has no names
+#' for the platform's package manager) and records the failure in the
 #' `"fallback_error"` attribute of the returned plan.
 #'
 #' @param packages Package names. Required when `all = FALSE`.
@@ -176,7 +177,18 @@ ppm_sysreqs <- function(packages = NULL, all = FALSE, platform = NULL,
     if (isTRUE(all)) {
       stop(res)
     }
-    plan <- bundled_sysreqs(packages, platform, repo = repo, error = NULL)
+    # The bundled fallback covers apt, dnf, yum, zypper, and apk. On other
+    # platforms (for example brew) return an empty plan that records the
+    # original Package Manager error instead of failing with a misleading
+    # message about the bundled data.
+    plan <- tryCatch(
+      bundled_sysreqs(packages, platform, repo = repo, error = NULL),
+      error = function(e2) {
+        empty <- new_sysreqr_plan(platform_info = platform, backend = "ppm")
+        attr(empty, "unresolved") <- packages
+        empty
+      }
+    )
     if (isTRUE(check_installed)) {
       plan <- add_installed_state(plan, platform)
     }
