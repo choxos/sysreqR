@@ -62,6 +62,34 @@ that in one place.
 `sysreqr` can use `pak` as one of its backends (`backend = "pak"`) when it
 is installed. The two tools are complementary, not competitors.
 
+## Can I skip source compilation entirely?
+
+Often, yes. Two families of solutions exist:
+
+* **Posit Package Manager** serves pre-compiled CRAN binaries for many
+  distributions through a drop-in CRAN repository URL. `use_ppm()` prints
+  the `.Rprofile` lines. Note that PPM binaries do not install the *runtime*
+  system libraries a package needs, so a second step (which `sysreqr` can
+  generate) may still be required.
+* **Distribution-native binary repositories** package CRAN for the system
+  package manager itself, so system dependencies install automatically:
+  [r2u](https://eddelbuettel.github.io/r2u/) for Ubuntu,
+  [cran2copr](https://github.com/cran4linux/cran2copr) for Fedora (the
+  `iucar/cran` Copr repository), and
+  [CRAN2OBS](https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home) for openSUSE.
+  The [bspm](https://cran.r-project.org/package=bspm) package bridges
+  `install.packages()` to the system package manager so these integrate
+  with the normal R workflow.
+
+Ucar and Eddelbuettel (2021), [*Binary R Packages for Linux: Past, Present
+and Future*](https://arxiv.org/abs/2103.08069), is a good overview of this
+landscape.
+
+If your distribution is covered by one of these projects, use it; `sysreqr`
+then matters mostly for the packages those repositories exclude, for
+distributions they do not cover, and for Docker/CI generation and log
+diagnosis.
+
 ## I'm in Docker and platform detection seems wrong
 
 When you run `detect_platform()` *outside* a container, R sees the host

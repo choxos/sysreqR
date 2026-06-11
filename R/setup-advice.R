@@ -306,7 +306,10 @@ setup_r_project_advice <- function(platform) {
         "For many package install failures, try Posit Package Manager or",
         "system requirements first.",
         "On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation",
-        "warning; it still works."
+        "warning; it still works.",
+        "The optional r2u project (https://eddelbuettel.github.io/r2u/) serves",
+        "all of CRAN as Ubuntu binaries with system dependencies resolved by apt",
+        "and integrates with install.packages() through the bspm package."
       )
     ))
   }
@@ -356,8 +359,10 @@ setup_r_project_advice <- function(platform) {
       ),
       notes = paste(
         "Fedora provides R through the system package manager.",
-        "The optional iucar/cran COPR repository adds binary RPMs for many more CRAN",
-        "packages; R-CoprManager integrates it with R's package installation workflow."
+        "The optional iucar/cran Copr repository (the cran2copr project,",
+        "https://github.com/cran4linux/cran2copr) adds binary RPMs for nearly all",
+        "of CRAN with system dependencies resolved by dnf; R-CoprManager",
+        "integrates it with R's package installation workflow."
       )
     ))
   }

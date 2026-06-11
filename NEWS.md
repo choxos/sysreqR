@@ -9,6 +9,16 @@
   `odbc`, `av`, `rsvg`, `xslt`, and `protolite` (40 curated packages in
   total).
 
+## Documentation
+
+* The README, the FAQ, and the setup, fundamentals, and Docker vignettes
+  now describe distribution-native binary repositories that resolve system
+  dependencies automatically: `r2u` (Ubuntu), `cran2copr` (Fedora),
+  `CRAN2OBS` (openSUSE), and the `bspm` bridge, with a pointer to Ucar and
+  Eddelbuettel (2021, arXiv:2103.08069). `setup_advice()` mentions `r2u`
+  on Ubuntu and credits the `cran2copr` project on Fedora. Suggested by
+  Dirk Eddelbuettel (#1).
+
 ## Bug fixes
 
 * `diagnose_log()`, `check_error()`, and the other log-diagnosis helpers now

@@ -238,6 +238,38 @@ checks.
 `sysreqr` can use `pak` as one of its backends (`backend = "pak"`) when it
 is installed. The tools are complementary, not competitors.
 
+### Binary package repositories for Linux
+
+A different way to avoid missing system requirements is to not compile at
+all. Several community projects serve CRAN packages as native Linux binary
+packages, with system dependencies resolved by the distribution's own
+package manager:
+
+* **[r2u](https://eddelbuettel.github.io/r2u/)** serves all of CRAN as
+  Ubuntu binaries with full `apt` dependency resolution.
+* **[cran2copr](https://github.com/cran4linux/cran2copr)** serves CRAN as
+  RPM binaries for Fedora through the `iucar/cran` Copr repository
+  (`setup_advice()` mentions it on Fedora).
+* **[CRAN2OBS](https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home)** builds
+  CRAN as RPM binaries for openSUSE via the openSUSE Build Service.
+* **[bspm](https://cran.r-project.org/package=bspm)** bridges
+  `install.packages()` to the system package manager, so the repositories
+  above integrate transparently with the normal R workflow. r2u and
+  cran2copr both use it.
+* **[RcppAPT](https://cran.r-project.org/package=RcppAPT)** lets R query
+  the `apt` database directly on Debian and Ubuntu.
+
+Ucar and Eddelbuettel (2021), [*Binary R Packages for Linux: Past, Present
+and Future*](https://arxiv.org/abs/2103.08069), reviews these approaches
+and the system-requirements problem in depth.
+
+On a distribution covered by one of these projects, they remove most of
+the need to chase `-dev` packages by hand. `sysreqr` remains useful for
+the remaining cases: source installs of packages the binary repositories
+exclude, distributions without such a repository (Debian stable, Alpine,
+RHEL derivatives), generating Dockerfile and CI snippets, diagnosing logs
+from machines you do not control, and drafting administrator requests.
+
 ## Limitations
 
 System requirement data can be incomplete when upstream metadata is

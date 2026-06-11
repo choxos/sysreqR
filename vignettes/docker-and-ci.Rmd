@@ -203,6 +203,17 @@ write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 
 Then call `sh ci/install-sysreqs.sh` from any CI runner.
 
+## Binary-first alternatives
+
+On Ubuntu, the [r2u](https://eddelbuettel.github.io/r2u/) apt repository
+(also available pre-configured in the `rocker/r2u` Docker image) installs
+CRAN packages as Ubuntu binaries with system dependencies resolved by
+`apt`, which can replace the generated install step entirely for the
+packages it covers. Similar repositories exist for Fedora
+([cran2copr](https://github.com/cran4linux/cran2copr)) and openSUSE
+([CRAN2OBS](https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home)); see
+`vignette("faq")` for an overview.
+
 ## Posit Workbench and Posit Connect
 
 Both Posit Workbench and Posit Connect benefit from Posit Package Manager
