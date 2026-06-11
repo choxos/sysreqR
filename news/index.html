@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sysreqr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +43,34 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.0" id="sysreqr-010">sysreqr 0.1.0<a class="anchor" aria-label="anchor" href="#sysreqr-010"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.0" id="sysreqr-020">sysreqr 0.2.0<a class="anchor" aria-label="anchor" href="#sysreqr-020"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-2-0"></a></h3>
+<ul><li>New <code><a href="../reference/gitlab_ci.html">gitlab_ci()</a></code> generates a GitLab CI YAML job that installs the system packages a plan needs. GitLab CI jobs usually run as root inside a container image, so the commands are emitted without <code>sudo</code>.</li>
+<li>The bundled fallback database now also covers <code>igraph</code>, <code>rJava</code>, <code>jqr</code>, <code>odbc</code>, <code>av</code>, <code>rsvg</code>, <code>xslt</code>, and <code>protolite</code> (40 curated packages in total).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h3>
+<ul><li>The README, the FAQ, and the setup, fundamentals, and Docker vignettes now describe distribution-native binary repositories that resolve system dependencies automatically: <code>r2u</code> (Ubuntu), <code>cran2copr</code> (Fedora), <code>CRAN2OBS</code> (openSUSE), and the <code>bspm</code> bridge, with a pointer to Ucar and Eddelbuettel (2021, arXiv:2103.08069). <code><a href="../reference/setup_advice.html">setup_advice()</a></code> mentions <code>r2u</code> on Ubuntu and credits the <code>cran2copr</code> project on Fedora. Suggested by Dirk Eddelbuettel (<a href="https://github.com/choxos/sysreqR/issues/1" class="external-link">#1</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/diagnose_log.html">diagnose_log()</a></code>, <code><a href="../reference/check_error.html">check_error()</a></code>, and the other log-diagnosis helpers now report package names that match the platform’s package manager. Previously the direct log patterns always suggested apt names, so Fedora users were told to run <code>dnf install -y libxml2-dev</code> instead of <code>dnf install -y libxml2-devel</code>. Mapped names on non-apt platforms carry a note asking the user to verify the exact name on their distribution.</li>
+<li>
+<code><a href="../reference/explain.html">explain()</a></code> no longer prints lines such as <code>NA needs libxml2-dev.</code> for diagnosis results that have no associated R package name; it now says <code>libxml2-dev is needed.</code> instead.</li>
+<li>The internal JSON writer no longer double-escapes newline, carriage return, and tab characters, and now escapes backspace, form feed, and the remaining control characters, so written JSON always parses back to the original strings.</li>
+<li>The internal JSON parser now validates <code>\u</code> escape sequences (rejecting truncated escapes) and decodes UTF-16 surrogate pairs, so characters outside the Basic Multilingual Plane survive parsing. Unpaired surrogates are rejected.</li>
+<li>Generated shell commands, Dockerfile snippets, and CI snippets drop system package names that contain unexpected characters (with a warning) instead of pasting them into the command line.</li>
+<li>Posit Package Manager requirements that consist only of post-install commands (for example <code>R CMD javareconf</code>) now keep their row in the plan.</li>
+<li>
+<code><a href="../reference/detect_platform.html">detect_platform()</a></code> now reports Alpine hosts as supported, matching <code>resolve_platform("alpine-3.20")</code> and the documented platform list.</li>
+<li>
+<code><a href="../reference/use_ppm.html">use_ppm()</a></code> documentation no longer claims that <code>scope</code> selects which <code>.Rprofile</code> is edited; <code>path</code> is always required for writing, and the error message now suggests a scope-appropriate path.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="sysreqr-010">sysreqr 0.1.0<a class="anchor" aria-label="anchor" href="#sysreqr-010"></a></h2><p class="text-muted">CRAN release: 2026-06-11</p>
 <p>First public release.</p>
 <div class="section level3">
 <h3 id="preflight-checks-0-1-0">Preflight checks<a class="anchor" aria-label="anchor" href="#preflight-checks-0-1-0"></a></h3>

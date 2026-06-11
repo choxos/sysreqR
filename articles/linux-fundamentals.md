@@ -128,7 +128,13 @@ come from. Two strategies to avoid them:
     Manager](https://packagemanager.posit.co/) binary repository for
     your distribution.
     [`sysreqr::use_ppm()`](https://choxos.github.io/sysreqR/reference/use_ppm.md)
-    produces the `.Rprofile` lines for that.
+    produces the `.Rprofile` lines for that. Some distributions also
+    have community-maintained native binary repositories that resolve
+    system dependencies automatically:
+    [r2u](https://eddelbuettel.github.io/r2u/) for Ubuntu,
+    [cran2copr](https://github.com/cran4linux/cran2copr) for Fedora, and
+    [CRAN2OBS](https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home) for
+    openSUSE. See the FAQ vignette for details.
 2.  **Install the right -dev packages first**:
     [`sysreqr::setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
     and

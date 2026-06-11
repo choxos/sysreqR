@@ -36,6 +36,7 @@ A plain-text administrator request.
 Other commands:
 [`dockerfile()`](https://choxos.github.io/sysreqR/reference/dockerfile.md),
 [`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md),
+[`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md),
 [`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
 
 ## Examples

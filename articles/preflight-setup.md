@@ -142,6 +142,14 @@ use_ppm(platform = "ubuntu-24.04", dry_run = TRUE)
 does not edit files unless `dry_run = FALSE` and an explicit `path` is
 supplied.
 
+Posit Package Manager binaries do not install the runtime system
+libraries a package needs, so check the requirements anyway. On some
+distributions a community binary repository handles system dependencies
+automatically instead: r2u for Ubuntu, cran2copr for Fedora, CRAN2OBS
+for openSUSE. See
+[`vignette("faq")`](https://choxos.github.io/sysreqR/articles/faq.md)
+for links.
+
 When network access is available, these helpers query Posit Package
 Manager support and system requirement data live:
 

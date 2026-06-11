@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sysreqr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -259,32 +259,60 @@ reports), where the standard r-lib actions are less of a fit.</li>
 </ol>
 </div>
 <div class="section level2">
-<h2 id="beyond-github-actions">Beyond GitHub Actions<a class="anchor" aria-label="anchor" href="#beyond-github-actions"></a>
+<h2 id="gitlab-ci">GitLab CI<a class="anchor" aria-label="anchor" href="#gitlab-ci"></a>
+</h2>
+<p><code><a href="../reference/gitlab_ci.html">gitlab_ci()</a></code> generates a YAML job for GitLab pipelines.
+GitLab CI jobs usually run as root inside the container image, so the
+commands are emitted without <code>sudo</code>.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">plan</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_packages.html">check_packages</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"xml2"</span>, <span class="st">"curl"</span><span class="op">)</span>, platform <span class="op">=</span> <span class="st">"ubuntu-22.04"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/gitlab_ci.html">gitlab_ci</a></span><span class="op">(</span><span class="va">plan</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; install_system_requirements:</span></span>
+<span><span class="co">#&gt;   script:</span></span>
+<span><span class="co">#&gt;     - apt-get update</span></span>
+<span><span class="co">#&gt;     - apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev</span></span></code></pre></div>
+<p>In practice you fold those commands into the
+<code>before_script</code> of an existing job:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">test</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="at">  </span><span class="fu">image</span><span class="kw">:</span><span class="at"> rocker/r-ver:4.4</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="at">  </span><span class="fu">before_script</span><span class="kw">:</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> apt-get update</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="at">  </span><span class="fu">script</span><span class="kw">:</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Rscript -e 'devtools::check()'</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="beyond-github-actions-and-gitlab">Beyond GitHub Actions and GitLab<a class="anchor" aria-label="anchor" href="#beyond-github-actions-and-gitlab"></a>
 </h2>
 <p>The <code><a href="../reference/install_command.html">install_command()</a></code> output is portable across CI
-systems. For GitLab CI:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">test</span><span class="kw">:</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="at">  </span><span class="fu">image</span><span class="kw">:</span><span class="at"> rocker/r-ver:4.4</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="at">  </span><span class="fu">before_script</span><span class="kw">:</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> apt-get update</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> apt-get install -y libxml2-dev libcurl4-openssl-dev libssl-dev</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="at">  </span><span class="fu">script</span><span class="kw">:</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> Rscript -e 'devtools::check()'</span></span></code></pre></div>
-<p>For Jenkins, Drone, or shell-driven CI, write the install script
-once:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+systems. For Jenkins, Drone, or shell-driven CI, write the install
+script once:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_install_script.html">write_install_script</a></span><span class="op">(</span><span class="va">plan</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"install-sysreqs.sh"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Then call <code>sh ci/install-sysreqs.sh</code> from any CI
 runner.</p>
+</div>
+<div class="section level2">
+<h2 id="binary-first-alternatives">Binary-first alternatives<a class="anchor" aria-label="anchor" href="#binary-first-alternatives"></a>
+</h2>
+<p>On Ubuntu, the <a href="https://eddelbuettel.github.io/r2u/" class="external-link">r2u</a>
+apt repository (also available pre-configured in the
+<code>rocker/r2u</code> Docker image) installs CRAN packages as Ubuntu
+binaries with system dependencies resolved by <code>apt</code>, which
+can replace the generated install step entirely for the packages it
+covers. Similar repositories exist for Fedora (<a href="https://github.com/cran4linux/cran2copr" class="external-link">cran2copr</a>) and
+openSUSE (<a href="https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home" class="external-link">CRAN2OBS</a>);
+see <code><a href="../articles/faq.html">vignette("faq")</a></code> for an overview.</p>
 </div>
 <div class="section level2">
 <h2 id="posit-workbench-and-posit-connect">Posit Workbench and Posit Connect<a class="anchor" aria-label="anchor" href="#posit-workbench-and-posit-connect"></a>
 </h2>
 <p>Both Posit Workbench and Posit Connect benefit from Posit Package
 Manager binary R packages, which avoid source compilation entirely for
-the distributions they support. <code>use_ppm("user")</code> writes the
+the distributions they support. <code>use_ppm("user")</code> prints the
 <code>.Rprofile</code> fragment that points R at the right binary
-repository.</p>
+repository; pass <code>dry_run = FALSE</code> and an explicit
+<code>path</code> to write it.</p>
 <p>For Connect specifically, server administrators usually configure the
 repository at the server level, so end users only need the application
 code, not <code>.Rprofile</code> edits.</p>

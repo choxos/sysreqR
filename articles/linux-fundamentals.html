@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sysreqr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -321,7 +321,11 @@ come from. Two strategies to avoid them:</p>
 <li>
 <strong>Use binary R packages</strong>: on Linux, point R at the <a href="https://packagemanager.posit.co/" class="external-link">Posit Package Manager</a> binary
 repository for your distribution. <code><a href="../reference/use_ppm.html">sysreqr::use_ppm()</a></code>
-produces the <code>.Rprofile</code> lines for that.</li>
+produces the <code>.Rprofile</code> lines for that. Some distributions
+also have community-maintained native binary repositories that resolve
+system dependencies automatically: <a href="https://eddelbuettel.github.io/r2u/" class="external-link">r2u</a> for Ubuntu, <a href="https://github.com/cran4linux/cran2copr" class="external-link">cran2copr</a> for Fedora,
+and <a href="https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home" class="external-link">CRAN2OBS</a> for
+openSUSE. See the FAQ vignette for details.</li>
 <li>
 <strong>Install the right -dev packages first</strong>:
 <code><a href="../reference/setup_advice.html">sysreqr::setup_advice()</a></code> and

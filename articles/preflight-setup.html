@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sysreqr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -241,6 +241,11 @@ repository:</p>
 <p><code><a href="../reference/use_ppm.html">use_ppm()</a></code> does not edit files unless
 <code>dry_run = FALSE</code> and an explicit <code>path</code> is
 supplied.</p>
+<p>Posit Package Manager binaries do not install the runtime system
+libraries a package needs, so check the requirements anyway. On some
+distributions a community binary repository handles system dependencies
+automatically instead: r2u for Ubuntu, cran2copr for Fedora, CRAN2OBS
+for openSUSE. See <code><a href="../articles/faq.html">vignette("faq")</a></code> for links.</p>
 <p>When network access is available, these helpers query Posit Package
 Manager support and system requirement data live:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">

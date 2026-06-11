@@ -1,14 +1,19 @@
-# Generate a GitHub Actions snippet
+# Generate a GitLab CI snippet
 
-Produces a GitHub Actions YAML step that installs the system packages a
-plan needs. `gha()` is a short alias.
+Produces a GitLab CI YAML job that installs the system packages a plan
+needs. GitLab CI jobs usually run as root inside a container image, so
+the commands are emitted without `sudo`.
 
 ## Usage
 
 ``` r
-github_actions(x, platform = NULL, missing_only = TRUE, ...)
-
-gha(x, platform = NULL, missing_only = TRUE, ...)
+gitlab_ci(
+  x,
+  platform = NULL,
+  job = "install_system_requirements",
+  missing_only = TRUE,
+  ...
+)
 ```
 
 ## Arguments
@@ -21,6 +26,10 @@ gha(x, platform = NULL, missing_only = TRUE, ...)
 
   Platform specification accepted by
   [`resolve_platform()`](https://choxos.github.io/sysreqR/reference/resolve_platform.md).
+
+- job:
+
+  Name of the generated CI job.
 
 - missing_only:
 
@@ -41,18 +50,16 @@ A YAML snippet.
 Other commands:
 [`admin_request()`](https://choxos.github.io/sysreqR/reference/admin_request.md),
 [`dockerfile()`](https://choxos.github.io/sysreqR/reference/dockerfile.md),
-[`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md),
+[`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md),
 [`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
 
 ## Examples
 
 ``` r
-plan <- check_packages("xml2", platform = "ubuntu-22.04")
-cat(github_actions(plan))
-#> - name: Install Linux system dependencies
-#>   run: |
-#>     sudo apt-get update
-#>     sudo apt-get install -y libxml2-dev
-identical(gha(plan), github_actions(plan))
-#> [1] TRUE
+plan <- check_packages("xml2", platform = "ubuntu-22.04", backend = "bundled")
+cat(gitlab_ci(plan))
+#> install_system_requirements:
+#>   script:
+#>     - apt-get update
+#>     - apt-get install -y libxml2-dev
 ```

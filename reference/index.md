@@ -36,6 +36,8 @@ or administrator request templates.
 - [`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md)
   [`gha()`](https://choxos.github.io/sysreqR/reference/github_actions.md)
   : Generate a GitHub Actions snippet
+- [`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md)
+  : Generate a GitLab CI snippet
 - [`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
   : Generate an installation command
 

@@ -104,7 +104,7 @@ print(advice)
 #>   sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/"
 #>   sudo apt install --no-install-recommends r-base
 #> 
-#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works.
+#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works. The optional r2u project (https://eddelbuettel.github.io/r2u/) serves all of CRAN as Ubuntu binaries with system dependencies resolved by apt and integrates with install.packages() through the bspm package.
 #> 
 #> 4. Package-specific system requirements
 #> R packages checked: xml2
@@ -150,7 +150,7 @@ setup_advice(
 #>   sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/"
 #>   sudo apt install --no-install-recommends r-base
 #> 
-#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works.
+#> Use the R Project Ubuntu repository when your system R is too old. For many package install failures, try Posit Package Manager or system requirements first. On Ubuntu 24.04 and newer, the trusted.gpg.d step may print a deprecation warning; it still works. The optional r2u project (https://eddelbuettel.github.io/r2u/) serves all of CRAN as Ubuntu binaries with system dependencies resolved by apt and integrates with install.packages() through the bspm package.
 #> 
 #> 4. Package-specific system requirements
 #> R packages checked: xml2, curl
@@ -158,6 +158,6 @@ setup_advice(
 #>   sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 #> 
 #> 
-#> Script written to: /tmp/RtmpipParS/file1a6341c868c7.sh
+#> Script written to: /tmp/RtmprczlhJ/file1a0e31bdcc35.sh
 # }
 ```

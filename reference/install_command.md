@@ -55,7 +55,8 @@ A character vector of shell commands.
 Other commands:
 [`admin_request()`](https://choxos.github.io/sysreqR/reference/admin_request.md),
 [`dockerfile()`](https://choxos.github.io/sysreqR/reference/dockerfile.md),
-[`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md)
+[`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md),
+[`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md)
 
 ## Examples
 

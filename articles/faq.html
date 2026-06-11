@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">sysreqr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -158,6 +158,35 @@ having all of that in one place.</p>
 <p><code>sysreqr</code> can use <code>pak</code> as one of its backends
 (<code>backend = "pak"</code>) when it is installed. The two tools are
 complementary, not competitors.</p>
+</div>
+<div class="section level2">
+<h2 id="can-i-skip-source-compilation-entirely">Can I skip source compilation entirely?<a class="anchor" aria-label="anchor" href="#can-i-skip-source-compilation-entirely"></a>
+</h2>
+<p>Often, yes. Two families of solutions exist:</p>
+<ul>
+<li>
+<strong>Posit Package Manager</strong> serves pre-compiled CRAN
+binaries for many distributions through a drop-in CRAN repository URL.
+<code><a href="../reference/use_ppm.html">use_ppm()</a></code> prints the <code>.Rprofile</code> lines. Note
+that PPM binaries do not install the <em>runtime</em> system libraries a
+package needs, so a second step (which <code>sysreqr</code> can
+generate) may still be required.</li>
+<li>
+<strong>Distribution-native binary repositories</strong> package
+CRAN for the system package manager itself, so system dependencies
+install automatically: <a href="https://eddelbuettel.github.io/r2u/" class="external-link">r2u</a> for Ubuntu, <a href="https://github.com/cran4linux/cran2copr" class="external-link">cran2copr</a> for Fedora
+(the <code>iucar/cran</code> Copr repository), and <a href="https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home" class="external-link">CRAN2OBS</a> for
+openSUSE. The <a href="https://cran.r-project.org/package=bspm" class="external-link">bspm</a>
+package bridges <code><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages()</a></code> to the system package
+manager so these integrate with the normal R workflow.</li>
+</ul>
+<p>Ucar and Eddelbuettel (2021), <a href="https://arxiv.org/abs/2103.08069" class="external-link"><em>Binary R Packages for Linux:
+Past, Present and Future</em></a>, is a good overview of this
+landscape.</p>
+<p>If your distribution is covered by one of these projects, use it;
+<code>sysreqr</code> then matters mostly for the packages those
+repositories exclude, for distributions they do not cover, and for
+Docker/CI generation and log diagnosis.</p>
 </div>
 <div class="section level2">
 <h2 id="im-in-docker-and-platform-detection-seems-wrong">I’m in Docker and platform detection seems wrong<a class="anchor" aria-label="anchor" href="#im-in-docker-and-platform-detection-seems-wrong"></a>

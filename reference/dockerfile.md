@@ -41,6 +41,7 @@ A single Dockerfile snippet.
 Other commands:
 [`admin_request()`](https://choxos.github.io/sysreqR/reference/admin_request.md),
 [`github_actions()`](https://choxos.github.io/sysreqR/reference/github_actions.md),
+[`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md),
 [`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
 
 ## Examples

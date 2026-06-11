@@ -1,6 +1,70 @@
 # Changelog
 
+## sysreqr 0.2.0
+
+### New features
+
+- New
+  [`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md)
+  generates a GitLab CI YAML job that installs the system packages a
+  plan needs. GitLab CI jobs usually run as root inside a container
+  image, so the commands are emitted without `sudo`.
+- The bundled fallback database now also covers `igraph`, `rJava`,
+  `jqr`, `odbc`, `av`, `rsvg`, `xslt`, and `protolite` (40 curated
+  packages in total).
+
+### Documentation
+
+- The README, the FAQ, and the setup, fundamentals, and Docker vignettes
+  now describe distribution-native binary repositories that resolve
+  system dependencies automatically: `r2u` (Ubuntu), `cran2copr`
+  (Fedora), `CRAN2OBS` (openSUSE), and the `bspm` bridge, with a pointer
+  to Ucar and Eddelbuettel (2021, arXiv:2103.08069).
+  [`setup_advice()`](https://choxos.github.io/sysreqR/reference/setup_advice.md)
+  mentions `r2u` on Ubuntu and credits the `cran2copr` project on
+  Fedora. Suggested by Dirk Eddelbuettel
+  ([\#1](https://github.com/choxos/sysreqR/issues/1)).
+
+### Bug fixes
+
+- [`diagnose_log()`](https://choxos.github.io/sysreqR/reference/diagnose_log.md),
+  [`check_error()`](https://choxos.github.io/sysreqR/reference/check_error.md),
+  and the other log-diagnosis helpers now report package names that
+  match the platform’s package manager. Previously the direct log
+  patterns always suggested apt names, so Fedora users were told to run
+  `dnf install -y libxml2-dev` instead of
+  `dnf install -y libxml2-devel`. Mapped names on non-apt platforms
+  carry a note asking the user to verify the exact name on their
+  distribution.
+- [`explain()`](https://choxos.github.io/sysreqR/reference/explain.md)
+  no longer prints lines such as `NA needs libxml2-dev.` for diagnosis
+  results that have no associated R package name; it now says
+  `libxml2-dev is needed.` instead.
+- The internal JSON writer no longer double-escapes newline, carriage
+  return, and tab characters, and now escapes backspace, form feed, and
+  the remaining control characters, so written JSON always parses back
+  to the original strings.
+- The internal JSON parser now validates `\u` escape sequences
+  (rejecting truncated escapes) and decodes UTF-16 surrogate pairs, so
+  characters outside the Basic Multilingual Plane survive parsing.
+  Unpaired surrogates are rejected.
+- Generated shell commands, Dockerfile snippets, and CI snippets drop
+  system package names that contain unexpected characters (with a
+  warning) instead of pasting them into the command line.
+- Posit Package Manager requirements that consist only of post-install
+  commands (for example `R CMD javareconf`) now keep their row in the
+  plan.
+- [`detect_platform()`](https://choxos.github.io/sysreqR/reference/detect_platform.md)
+  now reports Alpine hosts as supported, matching
+  `resolve_platform("alpine-3.20")` and the documented platform list.
+- [`use_ppm()`](https://choxos.github.io/sysreqR/reference/use_ppm.md)
+  documentation no longer claims that `scope` selects which `.Rprofile`
+  is edited; `path` is always required for writing, and the error
+  message now suggests a scope-appropriate path.
+
 ## sysreqr 0.1.0
+
+CRAN release: 2026-06-11
 
 First public release.
 

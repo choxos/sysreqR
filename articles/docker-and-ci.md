@@ -176,11 +176,25 @@ requirements for you, use the `extra-packages` and `needs` inputs of
 2.  **CI for non-R-package projects** (Shiny apps, scripts, reports),
     where the standard r-lib actions are less of a fit.
 
-## Beyond GitHub Actions
+## GitLab CI
 
-The
-[`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
-output is portable across CI systems. For GitLab CI:
+[`gitlab_ci()`](https://choxos.github.io/sysreqR/reference/gitlab_ci.md)
+generates a YAML job for GitLab pipelines. GitLab CI jobs usually run as
+root inside the container image, so the commands are emitted without
+`sudo`.
+
+``` r
+
+plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")
+cat(gitlab_ci(plan))
+#> install_system_requirements:
+#>   script:
+#>     - apt-get update
+#>     - apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
+```
+
+In practice you fold those commands into the `before_script` of an
+existing job:
 
 ``` yaml
 test:
@@ -192,7 +206,12 @@ test:
     - Rscript -e 'devtools::check()'
 ```
 
-For Jenkins, Drone, or shell-driven CI, write the install script once:
+## Beyond GitHub Actions and GitLab
+
+The
+[`install_command()`](https://choxos.github.io/sysreqR/reference/install_command.md)
+output is portable across CI systems. For Jenkins, Drone, or
+shell-driven CI, write the install script once:
 
 ``` r
 
@@ -201,12 +220,25 @@ write_install_script(plan, file.path(tempdir(), "install-sysreqs.sh"))
 
 Then call `sh ci/install-sysreqs.sh` from any CI runner.
 
+## Binary-first alternatives
+
+On Ubuntu, the [r2u](https://eddelbuettel.github.io/r2u/) apt repository
+(also available pre-configured in the `rocker/r2u` Docker image)
+installs CRAN packages as Ubuntu binaries with system dependencies
+resolved by `apt`, which can replace the generated install step entirely
+for the packages it covers. Similar repositories exist for Fedora
+([cran2copr](https://github.com/cran4linux/cran2copr)) and openSUSE
+([CRAN2OBS](https://gitlab.com/dsteuer/CRAN2OBS/-/wikis/home)); see
+[`vignette("faq")`](https://choxos.github.io/sysreqR/articles/faq.md)
+for an overview.
+
 ## Posit Workbench and Posit Connect
 
 Both Posit Workbench and Posit Connect benefit from Posit Package
 Manager binary R packages, which avoid source compilation entirely for
-the distributions they support. `use_ppm("user")` writes the `.Rprofile`
-fragment that points R at the right binary repository.
+the distributions they support. `use_ppm("user")` prints the `.Rprofile`
+fragment that points R at the right binary repository; pass
+`dry_run = FALSE` and an explicit `path` to write it.
 
 For Connect specifically, server administrators usually configure the
 repository at the server level, so end users only need the application
