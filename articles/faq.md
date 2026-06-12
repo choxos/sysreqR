@@ -48,7 +48,7 @@ having all of that in one place.
 | [`pak::pkg_sysreqs()`](https://pak.r-lib.org/reference/pkg_sysreqs.html) | Authoritative live resolver | Requires `pak`; no log diagnosis |
 | `remotes::system_requirements()` | Light; widely available | No log diagnosis, no project scanner |
 | `renv::sysreqs()` | Project-oriented; integrates with `renv` workflow | Requires `renv` |
-| `sysreqr` | Zero runtime deps; log diagnosis; beginner UX | Bundled DB covers ~40 curated packages |
+| `sysreqr` | Zero runtime deps; log diagnosis; beginner UX | Bundled DB is small; biased to `apt` |
 
 `sysreqr` can use `pak` as one of its backends (`backend = "pak"`) when
 it is installed. The two tools are complementary, not competitors.
@@ -125,11 +125,9 @@ openSUSE, the equivalent is `R-base`.
 ## I’m on Alpine. What’s supported?
 
 Alpine uses `apk` and is detected as `alpine`. Install commands use
-`apk add --no-cache`. The bundled fallback database carries Alpine
-package names for its curated set, and log diagnosis maps error patterns
-to `apk` names. Posit Package Manager does not cover Alpine, so for
-packages outside the bundled set use the `pak` backend. Many common
-system libraries on Alpine are in the [community
+`apk add --no-cache`. The bundled fallback database currently uses
+Debian/Ubuntu names, so prefer the `ppm` or `pak` backend on Alpine.
+Many common system libraries on Alpine are in the [community
 repository](https://pkgs.alpinelinux.org/packages?branch=v3.20&repo=community).
 
 ## I’m behind a corporate proxy. PPM queries fail

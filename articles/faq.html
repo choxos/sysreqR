@@ -150,7 +150,8 @@ having all of that in one place.</p>
 <tr class="even">
 <td><code>sysreqr</code></td>
 <td>Zero runtime deps; log diagnosis; beginner UX</td>
-<td>Bundled DB covers ~40 curated packages</td>
+<td>Bundled DB is small; biased to <code>apt</code>
+</td>
 </tr>
 </tbody>
 </table>
@@ -225,11 +226,9 @@ itself. On openSUSE, the equivalent is <code>R-base</code>.</p>
 </h2>
 <p>Alpine uses <code>apk</code> and is detected as <code>alpine</code>.
 Install commands use <code>apk add --no-cache</code>. The bundled
-fallback database carries Alpine package names for its curated set, and
-log diagnosis maps error patterns to <code>apk</code> names. Posit
-Package Manager does not cover Alpine, so for packages outside the
-bundled set use the <code>pak</code> backend. Many common system
-libraries on Alpine are in the <a href="https://pkgs.alpinelinux.org/packages?branch=v3.20&amp;repo=community" class="external-link">community
+fallback database currently uses Debian/Ubuntu names, so prefer the
+<code>ppm</code> or <code>pak</code> backend on Alpine. Many common
+system libraries on Alpine are in the <a href="https://pkgs.alpinelinux.org/packages?branch=v3.20&amp;repo=community" class="external-link">community
 repository</a>.</p>
 </div>
 <div class="section level2">

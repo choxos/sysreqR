@@ -2,9 +2,8 @@
 
 Resolves the system packages an R package needs on a given Linux
 platform and returns them in a structured plan. The `"auto"` backend
-prefers the offline bundled database (which carries names for the `apt`,
-`dnf`/`yum`, `zypper`, and `apk` package managers), then Posit Package
-Manager, then `pak`.
+prefers the offline bundled database on `apt` platforms, then Posit
+Package Manager, then `pak`.
 
 ## Usage
 
