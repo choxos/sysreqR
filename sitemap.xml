@@ -1,6 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://choxos.github.io/sysreqR/404.html</loc></url>
+<url><loc>https://choxos.github.io/sysreqR/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://choxos.github.io/sysreqR/CONTRIBUTING.html</loc></url>
 <url><loc>https://choxos.github.io/sysreqR/LICENSE-text.html</loc></url>
+<url><loc>https://choxos.github.io/sysreqR/SECURITY.html</loc></url>
 <url><loc>https://choxos.github.io/sysreqR/articles/diagnosing-failures.html</loc></url>
 <url><loc>https://choxos.github.io/sysreqR/articles/docker-and-ci.html</loc></url>
 <url><loc>https://choxos.github.io/sysreqR/articles/faq.html</loc></url>

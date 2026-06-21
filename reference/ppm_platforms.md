@@ -137,7 +137,7 @@ ppm_platforms()
 #> 28    TRUE     TRUE  FALSE          TRUE x86_64, ....
 #> 29    TRUE    FALSE   TRUE          TRUE       x86_64
 #> 30    TRUE     TRUE   TRUE          TRUE       x86_64
-#> 31    TRUE     TRUE  FALSE          TRUE       x86_64
+#> 31    TRUE     TRUE   TRUE          TRUE       x86_64
 #> 32    TRUE     TRUE  FALSE          TRUE       x86_64
 #> 33   FALSE     TRUE  FALSE          TRUE       x86_64
 #> 34   FALSE     TRUE  FALSE          TRUE x86_64, ....
