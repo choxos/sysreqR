@@ -8,25 +8,25 @@ test_that("auto backend uses bundled data for known packages on apt", {
   expect_true("libcurl4-openssl-dev" %in% plan$system_package)
 })
 
-test_that("auto backend does not pick bundled on non-apt platforms (regression)", {
-  # Regression test: previously, select_backend() returned "bundled" for any
-  # apt-keyed package set even on Fedora/Rocky/SUSE, which then hard-errored
-  # with "Bundled fallback data currently supports apt platforms only."
-  fedora <- resolve_platform("fedora-40")
-  expect_false(identical(select_backend("xml2", "auto", fedora), "bundled"))
-
-  rocky <- resolve_platform("rockylinux-9")
-  expect_false(identical(select_backend("xml2", "auto", rocky), "bundled"))
-
-  ubuntu <- resolve_platform("ubuntu-22.04")
-  expect_equal(select_backend("xml2", "auto", ubuntu), "bundled")
+test_that("auto backend picks bundled for known packages on all bundled managers", {
+  # Since the bundled table carries per-package-manager names, auto routing
+  # uses it on apt, dnf, yum, zypper, and apk platforms alike.
+  expect_equal(select_backend("xml2", "auto", resolve_platform("ubuntu-22.04")), "bundled")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("fedora-40")), "bundled")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("rockylinux-9")), "bundled")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("centos7")), "bundled")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("opensuse156")), "bundled")
+  expect_equal(select_backend("xml2", "auto", resolve_platform("alpine-3.20")), "bundled")
 })
 
-test_that("select_backend routes a known package to ppm on non-apt platforms", {
-  # Positive assertion (not just "not bundled"): a simple, known package on a
-  # non-apt platform must route to ppm.
-  expect_equal(select_backend("xml2", "auto", resolve_platform("fedora-40")), "ppm")
-  expect_equal(select_backend("xml2", "auto", resolve_platform("rockylinux-9")), "ppm")
+test_that("select_backend routes around bundled when it cannot help", {
+  # Unknown packages route to ppm even when the platform is bundled-capable.
+  expect_equal(
+    select_backend("definitelynotbundled", "auto", resolve_platform("fedora-40")),
+    "ppm"
+  )
+  # brew has no bundled name set, so known packages route to ppm there.
+  expect_equal(select_backend("xml2", "auto", resolve_platform("macos-14")), "ppm")
 })
 
 test_that("bundled database uses cross-distro-portable package names", {
@@ -44,36 +44,27 @@ test_that("bundled database uses cross-distro-portable package names", {
   expect_false("libfreetype6-dev" %in% ragg$system_package)
 })
 
-test_that("check_packages on Fedora falls through without the apt-only error", {
-  # When auto routing previously chose bundled on any platform with known
-  # packages, this call errored with "Bundled fallback data currently supports
-  # apt platforms only." Mock pak so the test does not depend on a real pak
-  # install and pin the route to ppm with a mock that returns a Fedora plan.
-  fedora_ppm_mock <- function(endpoint, query, base_url) {
-    if (identical(endpoint, "status")) {
-      return(list(
-        version = "test",
-        distros = list(list(
-          os = "linux", distribution = "fedora", release = "40",
-          name = "fedora-40", binaryURL = "fedora-40",
-          sysReqs = TRUE, binaries = TRUE
-        ))
-      ))
-    }
-    list(requirements = list(list(
-      name = "xml2",
-      requirements = list(
-        packages = list("libxml2-devel"),
-        install_scripts = list("dnf install -y libxml2-devel")
-      )
-    )))
-  }
+test_that("check_packages on Fedora resolves dnf names without error", {
+  withr::local_options(sysreqr.installed_system_packages = character())
 
+  expect_no_error(
+    plan <- check_packages("xml2", platform = "fedora-40", backend = "auto")
+  )
+  expect_s3_class(plan, "sysreqr_plan")
+  expect_equal(attr(plan, "backend"), "bundled")
+  expect_true("libxml2-devel" %in% plan$system_package)
+  expect_false("libxml2-dev" %in% plan$system_package)
+})
+
+test_that("auto routing on Fedora falls through to pak for unknown packages", {
+  # Packages outside the bundled table route to ppm; Package Manager has no
+  # Fedora support, so auto routing must continue to the mocked pak backend
+  # instead of erroring.
   pak_mock <- function(pkg, ...) {
     list(
       packages = data.frame(
         sysreq = "libxml2",
-        packages = I(list("xml2")),
+        packages = I(list("definitelynotbundled")),
         system_packages = I(list("libxml2-devel")),
         pre_install = I(list(character())),
         post_install = I(list(character())),
@@ -85,16 +76,15 @@ test_that("check_packages on Fedora falls through without the apt-only error", {
   }
 
   withr::local_options(
-    sysreqr.ppm_get = fedora_ppm_mock,
     sysreqr.pak_pkg_sysreqs = pak_mock,
     sysreqr.installed_system_packages = character()
   )
 
   expect_no_error(
-    plan <- check_packages("xml2", platform = "fedora-40", backend = "auto")
+    plan <- check_packages("definitelynotbundled", platform = "fedora-40", backend = "auto")
   )
   expect_s3_class(plan, "sysreqr_plan")
-  expect_false(identical(attr(plan, "backend"), "bundled"))
+  expect_equal(attr(plan, "backend"), "pak")
 })
 
 test_that("bundled database covers the expanded package set", {
@@ -110,6 +100,65 @@ test_that("bundled database covers the expanded package set", {
 
   rjava <- check_packages("rJava", platform = "ubuntu-22.04", backend = "bundled")
   expect_true("default-jdk" %in% rjava$system_package)
+})
+
+test_that("bundled backend resolves per-package-manager names", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+
+  fedora <- check_packages("xml2", platform = "fedora-40", backend = "bundled")
+  expect_equal(fedora$system_package, "libxml2-devel")
+  expect_equal(fedora$package_manager, "dnf")
+  expect_match(fedora$notes, "verify the exact name", fixed = TRUE)
+
+  centos <- check_packages("RPostgres", platform = "centos7", backend = "bundled")
+  expect_equal(centos$system_package, "libpq-devel")
+  expect_equal(centos$package_manager, "yum")
+  expect_match(centos$install_script, "^yum install")
+
+  suse <- check_packages("curl", platform = "opensuse156", backend = "bundled")
+  expect_true(all(c("libcurl-devel", "libopenssl-devel") %in% suse$system_package))
+
+  alpine <- check_packages("sf", platform = "alpine-3.20", backend = "bundled")
+  expect_true(all(
+    c("gdal-dev", "geos-dev", "proj-dev", "sqlite-dev") %in% alpine$system_package
+  ))
+
+  ubuntu <- check_packages("xml2", platform = "ubuntu-22.04", backend = "bundled")
+  expect_false(any(grepl("verify the exact name", ubuntu$notes, fixed = TRUE)))
+})
+
+test_that("bundled backend reports packages with no name set for the platform", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+
+  plan <- check_packages("V8", platform = "opensuse156", backend = "bundled")
+  expect_equal(nrow(plan), 0L)
+  expect_true("V8" %in% attr(plan, "unresolved"))
+
+  apt <- check_packages("V8", platform = "ubuntu-22.04", backend = "bundled")
+  expect_true("libnode-dev" %in% apt$system_package)
+})
+
+test_that("bundled backend still rejects unsupported package managers", {
+  platform <- resolve_platform("ubuntu-22.04")
+  platform$package_manager <- "brew"
+  expect_error(
+    check_packages("xml2", platform = platform, backend = "bundled"),
+    "apt, dnf, yum, zypper"
+  )
+})
+
+test_that("bundled database has well-formed cross-distro rows", {
+  db <- getFromNamespace("bundled_sysreqs_db", "sysreqr")
+
+  expect_setequal(unique(db$package_manager), c("apt", "dnf", "zypper", "apk"))
+  expect_false(any(is.na(db$system_package)))
+  expect_true(all(grepl("^[A-Za-z0-9][A-Za-z0-9._+:@-]*$", db$system_package)))
+
+  # Every curated package must at least have apt names; the apt set is the
+  # baseline the package has shipped since 0.1.0.
+  known <- unique(db$r_package)
+  apt_known <- unique(db$r_package[db$package_manager == "apt"])
+  expect_setequal(known, apt_known)
 })
 
 test_that("check_packages errors when given no packages", {

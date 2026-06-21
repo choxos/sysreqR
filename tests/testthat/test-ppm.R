@@ -86,6 +86,45 @@ test_that("ppm_sysreqs falls back to bundled data on API error", {
   expect_match(attr(plan, "fallback_error"), "simulated PPM outage")
 })
 
+test_that("ppm_sysreqs API-error fallback uses platform-matching bundled names", {
+  failing_mock <- function(endpoint, query, base_url) {
+    stop("simulated PPM outage", call. = FALSE)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = failing_mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  suse <- ppm_sysreqs("xml2", platform = "opensuse156")
+  expect_true("libxml2-devel" %in% suse$system_package)
+  expect_match(attr(suse, "fallback_error"), "simulated PPM outage")
+
+  rocky <- ppm_sysreqs("xml2", platform = "rockylinux-9")
+  expect_true("libxml2-devel" %in% rocky$system_package)
+  expect_match(rocky$install_script, "^dnf install")
+})
+
+test_that("ppm_sysreqs API-error fallback returns an empty plan on brew", {
+  # Regression test: this previously hard-errored with "Bundled fallback data
+  # currently supports apt platforms only." instead of reporting the original
+  # Package Manager failure.
+  failing_mock <- function(endpoint, query, base_url) {
+    stop("simulated PPM outage", call. = FALSE)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = failing_mock,
+    sysreqr.installed_system_packages = character()
+  )
+  platform <- resolve_platform("ubuntu-22.04")
+  platform$package_manager <- "brew"
+
+  plan <- ppm_sysreqs("xml2", platform = platform)
+  expect_s3_class(plan, "sysreqr_plan")
+  expect_equal(nrow(plan), 0L)
+  expect_equal(attr(plan, "unresolved"), "xml2")
+  expect_match(attr(plan, "fallback_error"), "simulated PPM outage")
+})
+
 test_that("use_ppm dry_run returns repo configuration lines", {
   lines <- use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)
   expect_true(any(grepl("packagemanager.posit.co", lines, fixed = TRUE)))
