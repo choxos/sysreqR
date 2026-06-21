@@ -5,9 +5,10 @@
 Security updates are provided for the current CRAN release and the
 current development version on the default branch.
 
-| Version | Supported |
-|---------|-----------|
-| 0.1.x   | Yes       |
+| Version  | Supported |
+|----------|-----------|
+| 0.2.x    | Yes       |
+| \< 0.2.0 | No        |
 
 ## Reporting a Vulnerability
 
