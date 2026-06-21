@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/choxos/sysreqR/security/policy
+    about: Please follow the private reporting instructions in the security policy.
+  - name: General questions
+    url: https://github.com/choxos/sysreqR/discussions
+    about: Use discussions for questions that are not bugs or feature requests.

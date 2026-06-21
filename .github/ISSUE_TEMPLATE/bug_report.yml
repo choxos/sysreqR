@@ -1,0 +1,63 @@
+name: Bug report
+description: Report incorrect behavior in sysreqR.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please remove any private paths, tokens, or credentials before submitting.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Minimal reproducible example
+      description: Include the R code or shell command needed to reproduce the issue.
+      render: r
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04, Debian 12, Fedora 40, macOS, Windows"
+    validations:
+      required: true
+  - type: input
+    id: r_version
+    attributes:
+      label: R version
+      placeholder: "R 4.5.1"
+    validations:
+      required: true
+  - type: input
+    id: package_version
+    attributes:
+      label: sysreqR version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output or error
+      description: Paste relevant output with private information removed.
+      render: text
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I have removed secrets, tokens, and private hostnames.
+          required: true
+        - label: I have searched existing issues.
+          required: true

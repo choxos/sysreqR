@@ -9,7 +9,11 @@
 ^data-raw/
 ^\.DS_Store$
 ^\.lintr$
+^\.codegraph$
 ^LICENSE$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
+^SECURITY\.md$
 ^cran-comments\.md$
 ^sysreqr\.Rcheck$
 ^\.\.Rcheck$

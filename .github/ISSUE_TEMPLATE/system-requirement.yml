@@ -1,0 +1,47 @@
+name: System requirement mapping
+description: Report a missing or incorrect system requirement.
+title: "[Sysreq]: "
+labels:
+  - system-requirements
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form when sysreqR suggests the wrong system package or misses one.
+  - type: input
+    id: r_package
+    attributes:
+      label: R package
+      placeholder: "xml2"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04"
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Current sysreqR result
+      description: Paste the relevant sysreqR output.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected system package or command
+      description: Include the package manager command if you know it.
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Link to upstream documentation or paste the install failure showing the missing library.
+    validations:
+      required: false
