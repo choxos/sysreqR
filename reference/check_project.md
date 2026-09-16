@@ -34,7 +34,7 @@ check_project(
 
 - backend:
 
-  One of `"auto"`, `"ppm"`, or `"pak"`.
+  One of `"auto"`, `"bundled"`, `"ppm"`, or `"pak"`.
 
 - ...:
 

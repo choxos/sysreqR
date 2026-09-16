@@ -115,7 +115,7 @@ check_ppm("ubuntu-22.04")
 #> 
 #> 
 #> $version
-#> [1] "2026.05.0"
+#> [1] "2026.09.0"
 #> 
 check_ppm("fedora-40")
 #> $supported
@@ -156,7 +156,7 @@ check_ppm("fedora-40")
 #> NULL
 #> 
 #> $version
-#> [1] "2026.05.0"
+#> [1] "2026.09.0"
 #> 
 # }
 ```

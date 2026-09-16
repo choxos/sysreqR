@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   diagnosing-failures: diagnosing-failures.html
@@ -7,7 +7,7 @@ articles:
   faq: faq.html
   linux-fundamentals: linux-fundamentals.html
   preflight-setup: preflight-setup.html
-last_built: 2026-06-21T13:17Z
+last_built: 2026-09-16T23:25Z
 urls:
   reference: https://choxos.github.io/sysreqR/reference
   article: https://choxos.github.io/sysreqR/articles

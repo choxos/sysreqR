@@ -43,4 +43,30 @@ fixture <- system.file(
   mustWork = FALSE
 )
 if (nzchar(fixture)) detect_platform(os_release = fixture)
+#> $os
+#> [1] "linux"
+#> 
+#> $distro
+#> [1] "fedora"
+#> 
+#> $version
+#> [1] "40"
+#> 
+#> $codename
+#> [1] NA
+#> 
+#> $package_manager
+#> [1] "dnf"
+#> 
+#> $ppm_binary_url
+#> [1] NA
+#> 
+#> $supported
+#> [1] TRUE
+#> 
+#> $label
+#> [1] "Fedora Linux 40 (Workstation Edition) fedora"
+#> 
+#> attr(,"class")
+#> [1] "sysreqr_platform"
 ```
