@@ -97,3 +97,17 @@ test_that("JSON writer escapes control characters for a clean round-trip", {
   expect_match(escape_char, "\\u001b", fixed = TRUE)
   expect_equal(json_read_text(escape_char)$x, "a\033b")
 })
+
+test_that("JSON writer emits null for missing strings", {
+  json_serialize <- getFromNamespace("json_serialize", "sysreqr")
+
+  # Regression: NA_character_ serialized as the string "NA", so written plans
+  # carried "sysreq": "NA" instead of null.
+  expect_equal(json_serialize(list(x = NA_character_)), '{"x":null}')
+  expect_null(json_read_text(json_serialize(list(x = NA_character_)))$x)
+
+  tmp <- withr::local_tempfile(pattern = "sysreqr-json-", fileext = ".json")
+  json_write(data.frame(a = NA_character_, b = "ok", stringsAsFactors = FALSE), tmp)
+  expect_false(any(grepl('"NA"', readLines(tmp, warn = FALSE), fixed = TRUE)))
+  expect_null(json_read_file(tmp)[[1]]$a)
+})

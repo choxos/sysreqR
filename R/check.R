@@ -2,8 +2,9 @@
 #'
 #' Resolves the system packages an R package needs on a given Linux platform
 #' and returns them in a structured plan. The `"auto"` backend prefers the
-#' offline bundled database on `apt` platforms, then Posit Package Manager,
-#' then `pak`.
+#' offline bundled database (which carries names for the `apt`, `dnf`/`yum`,
+#' `zypper`, and `apk` package managers), then Posit Package Manager, then
+#' `pak`.
 #'
 #' @param packages Package names or package references.
 #' @param platform Platform specification accepted by [resolve_platform()].
@@ -85,9 +86,13 @@ select_backend <- function(packages, backend, platform = NULL) {
     return(backend)
   }
 
-  apt_platform <- !is.null(platform) && identical(platform$package_manager, "apt")
+  bundled_platform <- !is.null(platform) &&
+    is.character(platform$package_manager) &&
+    length(platform$package_manager) == 1L &&
+    !is.na(platform$package_manager) &&
+    platform$package_manager %in% bundled_supported_managers
 
-  if (apt_platform && all(is_simple_package_name(packages)) && bundled_has_packages(packages)) {
+  if (bundled_platform && all(is_simple_package_name(packages)) && bundled_has_packages(packages)) {
     "bundled"
   } else if (all(is_simple_package_name(packages))) {
     "ppm"
@@ -242,7 +247,7 @@ check_library <- function(packages = NULL, library = .libPaths()[1],
     packages <- .packages(all.available = TRUE, lib.loc = library)
   }
 
-  packages <- compact_chr(as.character(packages))
+  packages <- setdiff(compact_chr(as.character(packages)), base_r_packages)
   if (!length(packages)) {
     stop("No installed packages were found to check.", call. = FALSE)
   }

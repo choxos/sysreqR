@@ -86,6 +86,45 @@ test_that("ppm_sysreqs falls back to bundled data on API error", {
   expect_match(attr(plan, "fallback_error"), "simulated PPM outage")
 })
 
+test_that("ppm_sysreqs API-error fallback uses platform-matching bundled names", {
+  failing_mock <- function(endpoint, query, base_url) {
+    stop("simulated PPM outage", call. = FALSE)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = failing_mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  suse <- ppm_sysreqs("xml2", platform = "opensuse156")
+  expect_true("libxml2-devel" %in% suse$system_package)
+  expect_match(attr(suse, "fallback_error"), "simulated PPM outage")
+
+  rocky <- ppm_sysreqs("xml2", platform = "rockylinux-9")
+  expect_true("libxml2-devel" %in% rocky$system_package)
+  expect_match(rocky$install_script, "^dnf install")
+})
+
+test_that("ppm_sysreqs API-error fallback returns an empty plan on brew", {
+  # Regression test: this previously hard-errored with "Bundled fallback data
+  # currently supports apt platforms only." instead of reporting the original
+  # Package Manager failure.
+  failing_mock <- function(endpoint, query, base_url) {
+    stop("simulated PPM outage", call. = FALSE)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = failing_mock,
+    sysreqr.installed_system_packages = character()
+  )
+  platform <- resolve_platform("ubuntu-22.04")
+  platform$package_manager <- "brew"
+
+  plan <- ppm_sysreqs("xml2", platform = platform)
+  expect_s3_class(plan, "sysreqr_plan")
+  expect_equal(nrow(plan), 0L)
+  expect_equal(attr(plan, "unresolved"), "xml2")
+  expect_match(attr(plan, "fallback_error"), "simulated PPM outage")
+})
+
 test_that("use_ppm dry_run returns repo configuration lines", {
   lines <- use_ppm("user", platform = "ubuntu-22.04", dry_run = TRUE)
   expect_true(any(grepl("packagemanager.posit.co", lines, fixed = TRUE)))
@@ -148,4 +187,96 @@ test_that("ppm_sysreqs keeps requirements with only post-install commands", {
   expect_equal(plan$r_package, "demo")
   expect_match(plan$post_install, "javareconf", fixed = TRUE)
   expect_true("R CMD javareconf" %in% attr(plan, "post_install"))
+})
+
+test_that("ppm_sysreqs queries Package Manager with the names it understands", {
+  ppm_distribution_release <- getFromNamespace("ppm_distribution_release", "sysreqr")
+
+  # Rocky, AlmaLinux, and RHEL report point releases (9.4) in os-release;
+  # Package Manager only accepts the major version and the rockylinux name.
+  rocky <- detect_platform(
+    os_release = test_path("fixtures", "os-release-rockylinux-9")
+  )
+  expect_equal(
+    ppm_distribution_release(rocky),
+    list(distribution = "rockylinux", release = "9")
+  )
+  expect_equal(
+    ppm_distribution_release(resolve_platform("almalinux-9")),
+    list(distribution = "rockylinux", release = "9")
+  )
+  expect_equal(
+    ppm_distribution_release(resolve_platform("rhel-9.4")),
+    list(distribution = "redhat", release = "9")
+  )
+
+  leap <- detect_platform(
+    os_release = test_path("fixtures", "os-release-opensuse-leap-15.6")
+  )
+  expect_equal(
+    ppm_distribution_release(leap),
+    list(distribution = "opensuse", release = "15.6")
+  )
+
+  expect_error(
+    ppm_distribution_release(resolve_platform("fedora-40")),
+    "not supported by the Package Manager"
+  )
+})
+
+test_that("ppm_sysreqs sends the mapped distribution and release", {
+  seen <- NULL
+  recording_mock <- function(endpoint, query, base_url) {
+    seen <<- query
+    mock_ppm_get(endpoint, query, base_url)
+  }
+  withr::local_options(
+    sysreqr.ppm_get = recording_mock,
+    sysreqr.installed_system_packages = character()
+  )
+
+  rocky <- detect_platform(
+    os_release = test_path("fixtures", "os-release-rockylinux-9")
+  )
+  ppm_sysreqs("xml2", platform = rocky)
+  expect_equal(seen$distribution, "rockylinux")
+  expect_equal(seen$release, "9")
+
+  mint <- detect_platform(
+    os_release = test_path("fixtures", "os-release-linuxmint-22")
+  )
+  ppm_sysreqs("xml2", platform = mint)
+  expect_equal(seen$distribution, "ubuntu")
+  expect_equal(seen$release, "24.04")
+})
+
+test_that("check_ppm matches hosts through the Package Manager names", {
+  mock <- function(endpoint, query, base_url) {
+    if (identical(endpoint, "status")) {
+      return(list(
+        version = "2026.04.2",
+        distros = list(
+          list(
+            name = "rhel9", os = "linux", binaryURL = "rhel9",
+            display = "Rocky Linux 9", distribution = "rockylinux",
+            release = "9", sysReqs = TRUE, binaries = TRUE, hidden = FALSE
+          )
+        )
+      ))
+    }
+    mock_ppm_get(endpoint, query, base_url)
+  }
+  withr::local_options(sysreqr.ppm_get = mock)
+
+  rocky <- detect_platform(
+    os_release = test_path("fixtures", "os-release-rockylinux-9")
+  )
+  status <- check_ppm(rocky)
+  expect_true(status$supported)
+  expect_true(status$binaries)
+
+  # Platforms outside the sysreqs API report unsupported instead of erroring.
+  fedora <- check_ppm("fedora-40")
+  expect_false(fedora$supported)
+  expect_null(fedora$ppm)
 })

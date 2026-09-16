@@ -38,8 +38,9 @@ A \code{sysreqr_plan}.
 \description{
 Resolves the system packages an R package needs on a given Linux platform
 and returns them in a structured plan. The \code{"auto"} backend prefers the
-offline bundled database on \code{apt} platforms, then Posit Package Manager,
-then \code{pak}.
+offline bundled database (which carries names for the \code{apt}, \code{dnf}/\code{yum},
+\code{zypper}, and \code{apk} package managers), then Posit Package Manager, then
+\code{pak}.
 }
 \examples{
 plan <- check_packages(c("xml2", "curl"), platform = "ubuntu-22.04")

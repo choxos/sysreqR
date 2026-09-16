@@ -43,7 +43,7 @@ detect_project_packages <- function(path = ".", include_suggests = FALSE) {
     packages <- packages_from_source_files(path)
   }
 
-  sort(setdiff(compact_chr(packages), "R"))
+  sort(setdiff(compact_chr(packages), c("R", base_r_packages)))
 }
 
 #' Check system requirements for a project
@@ -54,7 +54,7 @@ detect_project_packages <- function(path = ".", include_suggests = FALSE) {
 #' @param path Project path.
 #' @param include_suggests Whether to include `Suggests` from `DESCRIPTION`.
 #' @param platform Platform specification accepted by [resolve_platform()].
-#' @param backend One of `"auto"`, `"ppm"`, or `"pak"`.
+#' @param backend One of `"auto"`, `"bundled"`, `"ppm"`, or `"pak"`.
 #' @param ... Passed to [check_packages()].
 #'
 #' @return A `sysreqr_plan`.

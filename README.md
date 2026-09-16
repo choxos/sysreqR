@@ -219,8 +219,10 @@ tested for:
   AlmaLinux): 8, 9, 10
 * **Fedora**: current releases
 * **CentOS** 7 (legacy)
-* **openSUSE Leap** / **SUSE Linux Enterprise**: 15.6
-* **Alpine**: 3.20
+* **openSUSE Leap** / **SUSE Linux Enterprise**: 15.6 (Leap 16.0 is
+  detected and gets `zypper` commands, but Posit Package Manager does not
+  publish binaries for it yet)
+* **Alpine**: 3.20 and newer
 
 macOS and Windows are detected, but most package installation problems on
 those platforms are handled by CRAN binaries rather than system package
@@ -233,7 +235,7 @@ checks.
 | `pak::pkg_sysreqs()`              | Authoritative live resolver                        | Requires `pak`; no log diagnosis         |
 | `remotes::system_requirements()`  | Light; widely available                            | No log diagnosis, no project scanner     |
 | `renv::sysreqs()`                 | Project-oriented; integrates with `renv` workflow  | Requires `renv`                          |
-| `sysreqr`                         | Zero runtime deps; log diagnosis; beginner UX      | Bundled DB is small; biased toward `apt` |
+| `sysreqr`                         | Zero runtime deps; log diagnosis; beginner UX      | Bundled DB covers ~40 curated packages   |
 
 `sysreqr` can use `pak` as one of its backends (`backend = "pak"`) when it
 is installed. The tools are complementary, not competitors.

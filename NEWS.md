@@ -2,12 +2,31 @@
 
 ## New features
 
+* The bundled fallback database is now cross-distro: it stores system
+  package names for `apt`, `dnf` (also used by `yum` platforms), `zypper`,
+  and `apk`, so `backend = "bundled"` and offline fallbacks work on Fedora,
+  RHEL and its rebuilds, openSUSE, and Alpine, not only on Debian and
+  Ubuntu. The `apt`, `dnf`, and `zypper` names are generated from the Posit
+  Package Manager database; the Alpine names are hand curated. The `"auto"`
+  backend now prefers bundled data on all of these platforms.
+* Log diagnosis recognizes many more missing libraries. The direct error
+  patterns grew from 12 to 33 and now cover, among others, zlib, bzip2, xz,
+  png, jpeg, tiff, freetype, fontconfig, cairo, SQLite, PostgreSQL,
+  MariaDB, libsodium, GMP, MPFR, GLPK, GEOS, ImageMagick, poppler,
+  leptonica, tesseract, ICU, webp, and Cyrus SASL, each with names for all
+  supported package managers.
 * New `gitlab_ci()` generates a GitLab CI YAML job that installs the system
   packages a plan needs. GitLab CI jobs usually run as root inside a
   container image, so the commands are emitted without `sudo`.
 * The bundled fallback database now also covers `igraph`, `rJava`, `jqr`,
   `odbc`, `av`, `rsvg`, `xslt`, and `protolite` (40 curated packages in
   total).
+* Installed-state detection now works on Alpine: `missing_only` filtering
+  and the `installed` plan column use `apk info` when running on an `apk`
+  platform.
+* The startup message suggests `setup_advice()` with the detected platform
+  instead of a hardcoded `ubuntu-24.04` example when the current host is a
+  supported Linux distribution.
 
 ## Documentation
 
@@ -43,8 +62,45 @@
   instead of pasting them into the command line.
 * Posit Package Manager requirements that consist only of post-install
   commands (for example `R CMD javareconf`) now keep their row in the plan.
+* When a Posit Package Manager query fails (for example with no network),
+  the fallback no longer stops with "Bundled fallback data currently
+  supports apt platforms only." on non-apt platforms. The bundled fallback
+  now serves platform-matching names, and on platforms outside the bundled
+  data (such as Homebrew) an empty plan is returned with the original
+  error recorded in the `fallback_error` attribute.
 * `detect_platform()` now reports Alpine hosts as supported, matching
   `resolve_platform("alpine-3.20")` and the documented platform list.
+* Posit Package Manager queries now work from real Rocky Linux, AlmaLinux,
+  Red Hat, openSUSE Leap, and Ubuntu-derivative hosts. Package Manager keys
+  on `rockylinux 9`, `redhat 9`, `opensuse 15.6`, and `ubuntu 24.04`, but
+  `/etc/os-release` reports `rocky 9.4`, `opensuse-leap 15.6`, or
+  `linuxmint 22`, so `ppm_sysreqs()`, `check_ppm()`, and `ppm_repo()` all
+  failed with "Unsupported system" or "No Package Manager binary URL" on
+  those machines. The detected `distro` and `version` are unchanged; only
+  the Package Manager lookup maps them. Ubuntu derivatives (Linux Mint,
+  Pop!_OS, elementary OS) now report the underlying Ubuntu release, taken
+  from `UBUNTU_CODENAME`.
+* `resolve_platform()` splits `<distro>-<version>` at the last dash, so
+  `"opensuse-leap-15.6"` resolves to openSUSE Leap 15.6 instead of distro
+  `opensuse` with version `leap-15.6`. The shorthand forms `"opensuse-15.6"`,
+  `"centos-7"`, and `"rockylinux-9.4"` now find their Package Manager binary
+  URL segment.
+* `resolve_platform("rhel9")` and `resolve_platform("rhel10")` now describe
+  Red Hat Enterprise Linux rather than Rocky Linux.
+* `diagnose_log()` and `check_error()` recognize `compilation failed for
+  package` and `lazy loading failed for package` lines, not only
+  `configuration failed for package`, when extracting failed package names.
+* `detect_project_packages()`, `check_project()`, and `check_library()` drop
+  packages that ship with R (`stats`, `utils`, `methods`, and so on) instead
+  of reporting them as unresolved.
+* `write_json()` writes `null` for missing strings; previously `NA` values
+  in columns such as `sysreq` were written as the string `"NA"`.
+* Installed-state detection on `apt` hosts ignores packages that were
+  removed but not purged (dpkg state `config-files`), which `dpkg-query -W`
+  lists alongside installed packages.
+* The `detect_platform()` example now ships its fixture file
+  (`inst/extdata/os-release-fedora-40`), so it runs instead of silently
+  skipping.
 * `use_ppm()` documentation no longer claims that `scope` selects which
   `.Rprofile` is edited; `path` is always required for writing, and the
   error message now suggests a scope-appropriate path.

@@ -239,6 +239,9 @@ json_serialize <- function(x, pretty = FALSE, indent = 0L) {
     if (length(x) != 1L) {
       return(json_serialize_array(as.list(x), pretty, indent))
     }
+    if (is.na(x)) {
+      return("null")
+    }
     return(json_quote(x))
   }
 

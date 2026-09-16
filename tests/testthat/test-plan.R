@@ -32,3 +32,34 @@ test_that("print.sysreqr_plan emits the expected sections", {
   expect_match(out, "Backend:", fixed = TRUE)
   expect_match(out, "libxml2-dev", fixed = TRUE)
 })
+
+test_that("list_installed_system_packages has an apk branch", {
+  list_installed <- getFromNamespace("list_installed_system_packages", "sysreqr")
+
+  skip_if(Sys.which("apk") == "", "apk is not available on this host")
+  installed <- list_installed(resolve_platform("alpine-3.20"))
+  expect_type(installed, "character")
+})
+
+test_that("startup_platform_example returns a usable platform key", {
+  helper <- getFromNamespace("startup_platform_example", "sysreqr")
+  example <- helper()
+  expect_type(example, "character")
+  expect_length(example, 1L)
+  expect_true(nzchar(example))
+  # Whatever the host, the example must resolve so the startup suggestion
+  # never points users at an invalid platform string.
+  expect_s3_class(resolve_platform(example), "sysreqr_platform")
+})
+
+test_that("list_installed_system_packages reads dpkg status on apt hosts", {
+  list_installed <- getFromNamespace("list_installed_system_packages", "sysreqr")
+
+  skip_if(Sys.which("dpkg-query") == "", "dpkg-query is not available on this host")
+  installed <- list_installed(resolve_platform("ubuntu-22.04"))
+  expect_type(installed, "character")
+  # dpkg itself is installed on every Debian-family host, and the status
+  # prefix must be stripped from the returned names.
+  expect_true("dpkg" %in% installed)
+  expect_false(any(startsWith(installed, "installed ")))
+})

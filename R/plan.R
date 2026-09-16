@@ -261,17 +261,22 @@ list_installed_system_packages <- function(platform = NULL) {
   # tokens intact when passed through the shell.
   out <- tryCatch({
     if (identical(pm, "apt") && nzchar(Sys.which("dpkg-query"))) {
-      system2(
+      # Packages removed but not purged stay in the dpkg database in the
+      # "config-files" state; only "installed" counts.
+      lines <- system2(
         "dpkg-query",
-        c("-W", shQuote("-f=${Package}\n")),
+        c("-W", shQuote("-f=${db:Status-Status} ${Package}\n")),
         stdout = TRUE, stderr = FALSE
       )
+      sub("^installed ", "", lines[startsWith(lines, "installed ")])
     } else if (pm %in% c("dnf", "yum", "zypper") && nzchar(Sys.which("rpm"))) {
       system2(
         "rpm",
         c("-qa", "--qf", shQuote("%{NAME}\n")),
         stdout = TRUE, stderr = FALSE
       )
+    } else if (identical(pm, "apk") && nzchar(Sys.which("apk"))) {
+      system2("apk", "info", stdout = TRUE, stderr = FALSE)
     } else if (identical(pm, "brew") && nzchar(Sys.which("brew"))) {
       system2("brew", "list", stdout = TRUE, stderr = FALSE)
     } else {

@@ -78,11 +78,18 @@ check_ppm <- function(platform = NULL, base_url = ppm_default_base_url()) {
   status <- ppm_api_get("status", base_url = base_url)
   distros <- status$distros %||% list()
 
-  matched <- Filter(function(x) {
-    identical(x$os, platform$os) &&
-      identical(x$distribution, platform$distro) &&
-      identical(as.character(x$release), as.character(platform$version))
-  }, distros)
+  # Compare against the names Package Manager uses (rockylinux, redhat,
+  # opensuse, major EL releases), not the raw os-release values.
+  target <- tryCatch(ppm_distribution_release(platform), error = function(e) NULL)
+  matched <- if (is.null(target)) {
+    list()
+  } else {
+    Filter(function(x) {
+      identical(x$os, platform$os) &&
+        identical(x$distribution, target$distribution) &&
+        identical(as.character(x$release), target$release)
+    }, distros)
+  }
 
   list(
     supported = length(matched) > 0 && isTRUE(matched[[1]]$sysReqs),
@@ -130,7 +137,8 @@ ppm_repo <- function(platform = NULL, repo = "cran", snapshot = "latest",
 #' Queries the Posit Package Manager `/sysreqs` endpoint for the given
 #' packages and platform, and normalizes the response into a
 #' `sysreqr_plan`. If the API call fails, the function falls back to the
-#' bundled database and records the failure in the
+#' bundled database (or to an empty plan when the bundled data has no names
+#' for the platform's package manager) and records the failure in the
 #' `"fallback_error"` attribute of the returned plan.
 #'
 #' @param packages Package names. Required when `all = FALSE`.
@@ -176,7 +184,18 @@ ppm_sysreqs <- function(packages = NULL, all = FALSE, platform = NULL,
     if (isTRUE(all)) {
       stop(res)
     }
-    plan <- bundled_sysreqs(packages, platform, repo = repo, error = NULL)
+    # The bundled fallback covers apt, dnf, yum, zypper, and apk. On other
+    # platforms (for example brew) return an empty plan that records the
+    # original Package Manager error instead of failing with a misleading
+    # message about the bundled data.
+    plan <- tryCatch(
+      bundled_sysreqs(packages, platform, repo = repo, error = NULL),
+      error = function(e2) {
+        empty <- new_sysreqr_plan(platform_info = platform, backend = "ppm")
+        attr(empty, "unresolved") <- packages
+        empty
+      }
+    )
     if (isTRUE(check_installed)) {
       plan <- add_installed_state(plan, platform)
     }
@@ -193,27 +212,39 @@ ppm_sysreqs <- function(packages = NULL, all = FALSE, platform = NULL,
   plan
 }
 
+# Map a detected distro/version pair to the (distribution, release) pair that
+# Posit Package Manager keys on. Detected values stay untouched everywhere
+# else; only the Package Manager query and binary URL lookup use this.
+ppm_target <- function(distro, version) {
+  distro <- tolower(distro %||% "")
+  version <- as.character(version %||% "")
+  aliases <- c(
+    rhel = "redhat",
+    rocky = "rockylinux",
+    almalinux = "rockylinux",
+    sles = "sle",
+    "opensuse-leap" = "opensuse"
+  )
+  if (distro %in% names(aliases)) {
+    distro <- aliases[[distro]]
+  }
+  # Enterprise Linux hosts report point releases in os-release (9.4) while
+  # Package Manager only knows the major version (9).
+  if (distro %in% c("redhat", "rockylinux", "centos")) {
+    version <- sub("[.].*$", "", version)
+  }
+  list(distribution = distro, release = version)
+}
+
 ppm_distribution_release <- function(platform) {
-  distro <- platform$distro
-  version <- as.character(platform$version)
+  target <- ppm_target(platform$distro, platform$version)
 
-  if (distro %in% c("rhel")) {
-    distro <- "redhat"
-  }
-
-  if (distro %in% c("rocky", "almalinux")) {
-    distro <- "rockylinux"
-  }
-
-  if (distro %in% c("sles")) {
-    distro <- "sle"
-  }
-
-  if (!distro %in% c("centos", "debian", "opensuse", "redhat", "rockylinux", "sle", "ubuntu")) {
+  supported <- c("centos", "debian", "opensuse", "redhat", "rockylinux", "sle", "ubuntu")
+  if (!target$distribution %in% supported) {
     stop("This platform is not supported by the Package Manager sysreqs API.", call. = FALSE)
   }
 
-  list(distribution = distro, release = version)
+  target
 }
 
 normalize_ppm_sysreqs <- function(res, platform, repo = "cran") {
