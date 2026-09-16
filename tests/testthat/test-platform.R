@@ -149,3 +149,58 @@ test_that("ppm_repo builds a URL for AlmaLinux", {
     "https://packagemanager.posit.co/cran/__linux__/rhel9/latest"
   )
 })
+
+test_that("detect_platform keeps openSUSE Leap hosts usable with Package Manager", {
+  skip_on_os("windows")
+  platform <- detect_platform(
+    os_release = test_path("fixtures", "os-release-opensuse-leap-15.6")
+  )
+
+  # The raw os-release ID is kept; only the Package Manager lookup maps it.
+  expect_equal(platform$distro, "opensuse-leap")
+  expect_equal(platform$version, "15.6")
+  expect_equal(platform$package_manager, "zypper")
+  expect_equal(platform$ppm_binary_url, "opensuse156")
+  expect_equal(
+    ppm_repo(platform = platform),
+    "https://packagemanager.posit.co/cran/__linux__/opensuse156/latest"
+  )
+})
+
+test_that("detect_platform maps Ubuntu derivatives to the Ubuntu release", {
+  skip_on_os("windows")
+  platform <- detect_platform(
+    os_release = test_path("fixtures", "os-release-linuxmint-22")
+  )
+
+  expect_equal(platform$distro, "ubuntu")
+  expect_equal(platform$version, "24.04")
+  expect_equal(platform$codename, "noble")
+  expect_equal(platform$ppm_binary_url, "noble")
+})
+
+test_that("resolve_platform splits distro IDs that contain a dash at the last dash", {
+  leap <- resolve_platform("opensuse-leap-15.6")
+  expect_equal(leap$distro, "opensuse-leap")
+  expect_equal(leap$version, "15.6")
+  expect_equal(leap$package_manager, "zypper")
+  expect_equal(leap$ppm_binary_url, "opensuse156")
+
+  expect_error(resolve_platform("ubuntu-"), "Unknown platform")
+})
+
+test_that("shorthand specs find Package Manager binary URLs by distro and version", {
+  expect_equal(resolve_platform("opensuse-15.6")$ppm_binary_url, "opensuse156")
+  expect_equal(resolve_platform("centos-7")$ppm_binary_url, "centos7")
+  expect_equal(resolve_platform("rockylinux-9.4")$ppm_binary_url, "rhel9")
+  expect_equal(resolve_platform("redhat-9.4")$ppm_binary_url, "rhel9")
+  expect_equal(resolve_platform("rhel-9.4")$ppm_binary_url, "rhel9")
+})
+
+test_that("rhel aliases resolve to Red Hat, not Rocky", {
+  rhel9 <- resolve_platform("rhel9")
+  expect_equal(rhel9$distro, "redhat")
+  expect_equal(rhel9$version, "9")
+  expect_equal(rhel9$ppm_binary_url, "rhel9")
+  expect_match(rhel9$label, "Red Hat", fixed = TRUE)
+})

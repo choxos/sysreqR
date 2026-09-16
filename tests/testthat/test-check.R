@@ -238,3 +238,20 @@ test_that("check_library validates the package vector and accepts overrides", {
   expect_true("libxml2-dev" %in% plan$system_package)
   expect_false(is.null(attr(plan, "library")))
 })
+
+test_that("check_library drops packages that ship with R", {
+  withr::local_options(sysreqr.installed_system_packages = character())
+
+  plan <- check_library(
+    packages = c("stats", "utils", "xml2"),
+    platform = "ubuntu-22.04",
+    backend = "bundled"
+  )
+  expect_equal(unique(plan$r_package), "xml2")
+  expect_length(attr(plan, "unresolved"), 0L)
+
+  expect_error(
+    check_library(packages = c("stats", "utils"), platform = "ubuntu-22.04"),
+    "No installed packages"
+  )
+})

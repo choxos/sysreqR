@@ -233,3 +233,13 @@ test_that("a header and linker hit for the same library produce one suggestion",
   plan <- diagnose_log(text = text, platform = "ubuntu-22.04", check_installed = FALSE)
   expect_equal(sum(plan$system_package == "libpng-dev"), 1L)
 })
+
+test_that("failed package extraction reads compilation and lazy loading failures", {
+  text <- paste(
+    "ERROR: compilation failed for package 'xml2'",
+    "ERROR: lazy loading failed for package ‘rJava’",
+    sep = "\n"
+  )
+
+  expect_equal(extract_failed_packages(text), c("xml2", "rJava"))
+})

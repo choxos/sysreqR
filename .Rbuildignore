@@ -25,3 +25,5 @@
 ^codecov\.yml$
 ^CITATION\.cff$
 ^vignettes/\..*$
+^documentation$
+^documentation/

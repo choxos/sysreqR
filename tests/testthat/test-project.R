@@ -85,3 +85,19 @@ test_that("check_project routes through check_packages", {
   expect_s3_class(plan, "sysreqr_plan")
   expect_true("libxml2-dev" %in% plan$system_package)
 })
+
+test_that("detect_project_packages drops packages that ship with R", {
+  tmp <- withr::local_tempdir()
+  writeLines(
+    c("library(xml2)", "stats::median(1)", "utils::head(1)", "library(methods)"),
+    file.path(tmp, "main.R")
+  )
+
+  expect_equal(detect_project_packages(tmp), "xml2")
+
+  writeLines(c(
+    "Package: demo",
+    "Imports: methods, stats, curl"
+  ), file.path(tmp, "DESCRIPTION"))
+  expect_equal(detect_project_packages(tmp), "curl")
+})

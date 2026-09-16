@@ -70,6 +70,37 @@
   error recorded in the `fallback_error` attribute.
 * `detect_platform()` now reports Alpine hosts as supported, matching
   `resolve_platform("alpine-3.20")` and the documented platform list.
+* Posit Package Manager queries now work from real Rocky Linux, AlmaLinux,
+  Red Hat, openSUSE Leap, and Ubuntu-derivative hosts. Package Manager keys
+  on `rockylinux 9`, `redhat 9`, `opensuse 15.6`, and `ubuntu 24.04`, but
+  `/etc/os-release` reports `rocky 9.4`, `opensuse-leap 15.6`, or
+  `linuxmint 22`, so `ppm_sysreqs()`, `check_ppm()`, and `ppm_repo()` all
+  failed with "Unsupported system" or "No Package Manager binary URL" on
+  those machines. The detected `distro` and `version` are unchanged; only
+  the Package Manager lookup maps them. Ubuntu derivatives (Linux Mint,
+  Pop!_OS, elementary OS) now report the underlying Ubuntu release, taken
+  from `UBUNTU_CODENAME`.
+* `resolve_platform()` splits `<distro>-<version>` at the last dash, so
+  `"opensuse-leap-15.6"` resolves to openSUSE Leap 15.6 instead of distro
+  `opensuse` with version `leap-15.6`. The shorthand forms `"opensuse-15.6"`,
+  `"centos-7"`, and `"rockylinux-9.4"` now find their Package Manager binary
+  URL segment.
+* `resolve_platform("rhel9")` and `resolve_platform("rhel10")` now describe
+  Red Hat Enterprise Linux rather than Rocky Linux.
+* `diagnose_log()` and `check_error()` recognize `compilation failed for
+  package` and `lazy loading failed for package` lines, not only
+  `configuration failed for package`, when extracting failed package names.
+* `detect_project_packages()`, `check_project()`, and `check_library()` drop
+  packages that ship with R (`stats`, `utils`, `methods`, and so on) instead
+  of reporting them as unresolved.
+* `write_json()` writes `null` for missing strings; previously `NA` values
+  in columns such as `sysreq` were written as the string `"NA"`.
+* Installed-state detection on `apt` hosts ignores packages that were
+  removed but not purged (dpkg state `config-files`), which `dpkg-query -W`
+  lists alongside installed packages.
+* The `detect_platform()` example now ships its fixture file
+  (`inst/extdata/os-release-fedora-40`), so it runs instead of silently
+  skipping.
 * `use_ppm()` documentation no longer claims that `scope` selects which
   `.Rprofile` is edited; `path` is always required for writing, and the
   error message now suggests a scope-appropriate path.

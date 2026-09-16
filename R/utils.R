@@ -70,6 +70,14 @@ is_simple_package_name <- function(x) {
   grepl("^[A-Za-z][A-Za-z0-9.]*$", x)
 }
 
+# Packages that ship with R itself. They never have system requirements, so
+# project scans and library audits drop them instead of reporting them as
+# unresolved.
+base_r_packages <- c(
+  "base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods",
+  "parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils"
+)
+
 package_manager_for_distro <- function(distro, version = NA_character_) {
   distro <- tolower(distro %||% "")
   version <- as.character(version %||% NA_character_)

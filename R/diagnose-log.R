@@ -460,7 +460,10 @@ extract_failed_packages <- function(text) {
   packages <- c(
     extract_first_group(
       lines,
-      "(?:ERROR:\\s*)?configuration failed for package ['\"]([^'\"]+)['\"]"
+      paste0(
+        "(?:ERROR:\\s*)?(?:configuration|compilation|lazy loading) failed ",
+        "for package ['\"]([^'\"]+)['\"]"
+      )
     ),
     extract_first_group(
       lines,

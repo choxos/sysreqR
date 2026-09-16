@@ -247,7 +247,7 @@ check_library <- function(packages = NULL, library = .libPaths()[1],
     packages <- .packages(all.available = TRUE, lib.loc = library)
   }
 
-  packages <- compact_chr(as.character(packages))
+  packages <- setdiff(compact_chr(as.character(packages)), base_r_packages)
   if (!length(packages)) {
     stop("No installed packages were found to check.", call. = FALSE)
   }

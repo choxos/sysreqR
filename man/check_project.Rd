@@ -19,7 +19,7 @@ check_project(
 
 \item{platform}{Platform specification accepted by \code{\link[=resolve_platform]{resolve_platform()}}.}
 
-\item{backend}{One of \code{"auto"}, \code{"ppm"}, or \code{"pak"}.}
+\item{backend}{One of \code{"auto"}, \code{"bundled"}, \code{"ppm"}, or \code{"pak"}.}
 
 \item{...}{Passed to \code{\link[=check_packages]{check_packages()}}.}
 }

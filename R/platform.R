@@ -103,6 +103,16 @@ detect_platform_from_file <- function(os_release) {
   }
 
   if (!is.na(distro) && "UBUNTU_CODENAME" %in% names(props)) {
+    if (!identical(distro, "ubuntu")) {
+      # Ubuntu derivatives (Linux Mint, Pop!_OS, elementary OS) report their
+      # own VERSION_ID; map the Ubuntu codename back to the Ubuntu release so
+      # Package Manager and the plan see the base distribution.
+      known <- known_platforms()
+      idx <- match(codename, known$codename)
+      if (!is.na(idx)) {
+        version <- known$version[[idx]]
+      }
+    }
     distro <- "ubuntu"
   }
 
@@ -220,10 +230,12 @@ resolve_platform <- function(platform = NULL) {
     ))
   }
 
-  parts <- strsplit(platform, "-", fixed = TRUE)[[1]]
-  if (length(parts) >= 2) {
-    distro <- parts[[1]]
-    version <- paste(parts[-1], collapse = "-")
+  # Split at the last dash so os-release IDs that contain a dash
+  # ("opensuse-leap-15.6") keep their full distro name.
+  parts <- regmatches(platform, regexec("^(.+)-([^-]+)$", platform))[[1]]
+  if (length(parts) == 3L) {
+    distro <- parts[[2]]
+    version <- parts[[3]]
     return(new_platform(
       os = "linux",
       distro = distro,
@@ -258,7 +270,7 @@ known_platforms <- function() {
       "ubuntu", "ubuntu", "ubuntu",
       "debian", "debian", "debian", "debian",
       "redhat", "redhat", "redhat", "redhat",
-      "rockylinux", "rockylinux", "rockylinux", "rockylinux",
+      "rockylinux", "rockylinux", "redhat", "redhat",
       "almalinux", "almalinux",
       "centos", "opensuse", "sle", "sle"
     ),
@@ -292,7 +304,8 @@ known_platforms <- function() {
       "Debian 12", "Debian 13", "Debian 12", "Debian 13",
       "Red Hat Enterprise Linux 7", "Red Hat Enterprise Linux 8",
       "Red Hat Enterprise Linux 9", "Red Hat Enterprise Linux 10",
-      "Rocky Linux 9", "Rocky Linux 10", "Rocky Linux 9", "Rocky Linux 10",
+      "Rocky Linux 9", "Rocky Linux 10",
+      "Red Hat Enterprise Linux 9", "Red Hat Enterprise Linux 10",
       "AlmaLinux 9", "AlmaLinux 10",
       "CentOS 7", "OpenSUSE 15.6", "SLE 15.6", "SLE 15.6"
     ),
@@ -302,16 +315,18 @@ known_platforms <- function() {
 
 ppm_binary_from_platform <- function(distro, version, codename) {
   distro <- tolower(distro %||% "")
-  version <- as.character(version %||% "")
   codename <- codename %||% NA_character_
 
   if (distro %in% c("ubuntu", "debian") && !is.na(codename) && nzchar(codename)) {
     return(codename)
   }
 
+  # Look up by the Package Manager distribution and release rather than the
+  # alias key, so "opensuse-15.6", "centos-7", and a Rocky host reporting
+  # VERSION_ID 9.4 all find their binary URL segment.
+  target <- ppm_target(distro, version)
   known <- known_platforms()
-  key <- paste0(distro, "-", version)
-  idx <- match(key, known$key)
+  idx <- match(TRUE, known$distro == target$distribution & known$version == target$release)
   if (!is.na(idx)) {
     return(known$ppm_binary_url[[idx]])
   }
