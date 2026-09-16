@@ -108,7 +108,7 @@ detect_platform_from_file <- function(os_release) {
       # own VERSION_ID; map the Ubuntu codename back to the Ubuntu release so
       # Package Manager and the plan see the base distribution.
       known <- known_platforms()
-      idx <- match(codename, known$codename)
+      idx <- match(codename, known$codename, incomparables = NA)
       if (!is.na(idx)) {
         version <- known$version[[idx]]
       }

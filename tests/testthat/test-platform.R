@@ -204,3 +204,19 @@ test_that("rhel aliases resolve to Red Hat, not Rocky", {
   expect_equal(rhel9$ppm_binary_url, "rhel9")
   expect_match(rhel9$label, "Red Hat", fixed = TRUE)
 })
+
+test_that("Ubuntu derivatives without a known codename keep their own version", {
+  os_release <- withr::local_tempfile(pattern = "os-release-")
+  writeLines(
+    c("NAME=\"elementary OS\"", "ID=elementary", "ID_LIKE=ubuntu",
+      "VERSION_ID=\"8\"", "UBUNTU_CODENAME="),
+    os_release
+  )
+  platform <- detect_platform(os_release = os_release)
+
+  # Regression: an NA codename must not match the NA codename of an
+  # unrelated known platform and rewrite the version.
+  expect_equal(platform$distro, "ubuntu")
+  expect_equal(platform$version, "8")
+  expect_true(is.na(platform$codename))
+})
